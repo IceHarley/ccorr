@@ -157,4 +157,10 @@ public class CRC {
     public String getAlgorithm() {
         return this.algorithmName;
     }
+
+    String calculateChecksum(Buffer buffer) {
+        reset();
+        update(buffer.getBytes(), 0, buffer.getLength());
+        return getHexValue();
+    }
 }

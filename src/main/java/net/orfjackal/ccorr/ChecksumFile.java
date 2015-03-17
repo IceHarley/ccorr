@@ -6,6 +6,9 @@ package net.orfjackal.ccorr;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class is used to represent a CCorr Checksum File. A new <code>ChecksumFile</code> is created with the
@@ -20,24 +23,6 @@ public class ChecksumFile implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Maximum allowed part length in bytes.
-     * <p/>
-     * NOTE: The part size is used in allocating a byte array in {@link #updateChecksums(long, String)}, so if this is
-     * very high, the program will run out of memory.
-     */
-    public static final int MAX_PART_SIZE = 10 * 1024 * 1024;    // 10 MB
-
-    /**
-     * Minimum allowed part length in bytes.
-     */
-    public static final int MIN_PART_SIZE = 1024;           // 1 KB
-
-    /**
-     * The file extension used by CCorr Checksum File.
-     */
-    public static final String FILE_EXTENSION = "ccf";
-
-    /**
      * The the file type name of CCorr Checksum File.
      */
     public static final String FILE_TYPE = "CCorr Checksum File";
@@ -45,7 +30,7 @@ public class ChecksumFile implements Serializable {
     /**
      * The part checksums in HEX format.
      */
-    private String[] checksums;
+    private List<String> checksums;
 
     /**
      * The name of the algorithm that was used for making the checksums.
@@ -54,7 +39,7 @@ public class ChecksumFile implements Serializable {
 
     /**
      * The length of the parts used for making the checksums in bytes. The type is <code>long</code> to avoid bugs in
-     * handling files over 2 GB, although the actual {@link #MAX_PART_SIZE maximum limit} is much lower.
+     * handling files over 2 GB, although the actual  is much lower.
      */
     private long partLength;
 
@@ -88,7 +73,7 @@ public class ChecksumFile implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         // TODO: write as the first object an Integer which tells the version of the file, so that importing old versions would be possible
-        out.writeObject(checksums);
+        out.writeObject(checksums.toArray(new String[checksums.size()]));
         out.writeObject(usedAlgorithm);
         out.writeLong(partLength);
         out.writeObject(sourceFile);
@@ -97,7 +82,7 @@ public class ChecksumFile implements Serializable {
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        checksums = (String[]) in.readObject();
+        checksums = Arrays.asList((String[]) in.readObject());
         usedAlgorithm = (String) in.readObject();
         partLength = in.readLong();
         sourceFile = (File) in.readObject();
@@ -163,81 +148,46 @@ public class ChecksumFile implements Serializable {
         boolean successful = false;
 
         ProgressMonitor monitor = Settings.getProgressMonitor();
+        FileDivider fileDivider = new FileDivider(sourceFile, partLength);
 
-        if (this.sourceFile.exists() && this.sourceFile.canRead()) {
-            CRC crc = new CRC(algorithm);
-            this.usedAlgorithm = crc.getAlgorithm();
+        CRC crc = new CRC(algorithm);
+        this.usedAlgorithm = crc.getAlgorithm();
 
-            if (partLength < MIN_PART_SIZE) {
-                partLength = MIN_PART_SIZE;
-            } else if (partLength > MAX_PART_SIZE) {
-                partLength = MAX_PART_SIZE;
+        try {
+            setupProgressMonitor(monitor);
+            int lastMonitorValue = -1;
+
+            checksums = new ArrayList<String>();
+            this.sourceFileLength = this.sourceFile.length();
+
+            fileDivider.divide();
+            Buffer buffer = fileDivider.nextPart();
+            int i = 0;
+            this.partLength = fileDivider.getPartLength();
+            while (!Buffer.EOF.equals(buffer)) {
+                checksums.add(crc.calculateChecksum(buffer));
+                lastMonitorValue = updateProgressMonitor(monitor, lastMonitorValue, i * 100 / fileDivider.getParts());
+                buffer = fileDivider.nextPart();
+                i++;
             }
-            this.partLength = partLength;
 
-            // start making checksums
+            successful = true;
+
+        } catch (Exception e) {
+            // something went wrong, reset the checksum table
+            e.printStackTrace();
+            this.checksums = null;
+            successful = false;
+        }
+        finally {
             try {
-                // get source file length and number of parts
-                this.sourceFileLength = this.sourceFile.length();
-                int parts = (int) (this.sourceFileLength / this.partLength);
-                if ((this.sourceFileLength % this.partLength) != 0) {
-                    parts++;
-                }
-                this.checksums = new String[parts];
-
-                // setup progress monitor
-                if (monitor != null) {
-                    monitor.setMinimum(0);
-                    monitor.setMaximum(100);
-                }
-
-                // stuff for reading files
-                BufferedInputStream input =
-                        new BufferedInputStream(
-                                new FileInputStream(this.sourceFile),
-                                Settings.getReadBufferLength()
-                        );
-                byte[] buffer = new byte[(int) this.partLength];
-                int lastMonitorValue = -1;
-
-                // read one part at a time and make the checksums
-                for (int i = 0; i < this.checksums.length; i++) {
-                    int len = input.read(buffer);
-                    crc.reset();
-                    crc.update(buffer, 0, len);
-                    this.checksums[i] = crc.getHexValue();
-
-                    // update progress monitor
-                    if (monitor != null) {
-                        int percentage = i * 100 / parts;
-                        if (percentage != lastMonitorValue) {
-                            monitor.setProgress(percentage);
-                            monitor.setNote("Completed " + percentage + "%");
-                            lastMonitorValue = percentage;
-                            Thread.yield(); // allow the GUI some time to be updated
-                        }
-
-                        if (monitor.isCanceled()) {
-                            Log.print("updateChecksums: Cancelled by user");
-                            throw new Exception("Cancelled by user");
-                        }
-                    }
-                }
-                input.close();
-                successful = true;
-
-            } catch (Exception e) {
-                // something went wrong, reset the checksum table
+                fileDivider.close();
+            } catch (IOException e) {
                 e.printStackTrace();
-                this.checksums = null;
-                successful = false;
             }
         }
 
-        // close progress monitor
-        if (monitor != null) {
-            monitor.setProgress(monitor.getMaximum());
-        }
+        closeProcessMonitor(monitor);
 
         if (successful) {
             Log.println("updateChecksums: Done");
@@ -246,6 +196,37 @@ public class ChecksumFile implements Serializable {
         }
 
         return successful;
+    }
+
+    private void closeProcessMonitor(ProgressMonitor monitor) {
+        if (monitor != null) {
+            monitor.setProgress(monitor.getMaximum());
+        }
+    }
+
+    private void setupProgressMonitor(ProgressMonitor monitor) {
+        // setup progress monitor
+        if (monitor != null) {
+            monitor.setMinimum(0);
+            monitor.setMaximum(100);
+        }
+    }
+
+    private int updateProgressMonitor(ProgressMonitor monitor, int lastMonitorValue, int percentage) throws Exception {
+        if (monitor != null) {
+            if (percentage != lastMonitorValue) {
+                monitor.setProgress(percentage);
+                monitor.setNote("Completed " + percentage + "%");
+                lastMonitorValue = percentage;
+                Thread.yield(); // allow the GUI some time to be updated
+            }
+
+            if (monitor.isCanceled()) {
+                Log.print("updateChecksums: Cancelled by user");
+                throw new Exception("Cancelled by user");
+            }
+        }
+        return lastMonitorValue;
     }
 
     /**
@@ -277,7 +258,7 @@ public class ChecksumFile implements Serializable {
         if (this.checksums == null) {
             return -1;
         } else {
-            return this.checksums.length;
+            return this.checksums.size();
         }
     }
 
@@ -288,10 +269,10 @@ public class ChecksumFile implements Serializable {
      * @return the checksum in HEX format, or null if parameter invalid
      */
     public String getChecksum(int part) {
-        if (this.checksums == null || part < 0 || part >= this.checksums.length) {
+        if (this.checksums == null || part < 0 || part >= this.checksums.size()) {
             return null;
         } else {
-            return this.checksums[part];
+            return this.checksums.get(part);
         }
     }
 
@@ -302,7 +283,7 @@ public class ChecksumFile implements Serializable {
      * @return index of the part's first byte, or -1 if parameter invalid
      */
     public long getStartOffset(int part) {
-        if (this.checksums == null || part < 0 || part >= this.checksums.length) {
+        if (this.checksums == null || part < 0 || part >= this.checksums.size()) {
             return -1;
         } else {
             return this.partLength * part;
@@ -316,7 +297,7 @@ public class ChecksumFile implements Serializable {
      * @return index of the part's last byte, or -1 if parameter invalid
      */
     public long getEndOffset(int part) {
-        if (this.checksums == null || part < 0 || part >= this.checksums.length) {
+        if (this.checksums == null || part < 0 || part >= this.checksums.size()) {
             return -1;
         } else {
             long offset = (this.partLength * (part + 1)) - 1;

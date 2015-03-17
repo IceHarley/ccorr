@@ -69,8 +69,8 @@ public class CreateChecksumsFileChooser extends JFileChooser {
 
     private void initPartLengthInputField() {
         NumberFormatter formatter = new NumberFormatter();
-        formatter.setMinimum(ChecksumFile.MIN_PART_SIZE / 1024);
-        formatter.setMaximum(ChecksumFile.MAX_PART_SIZE / 1024);
+        formatter.setMinimum(FileDivider.MIN_PART_SIZE / 1024);
+        formatter.setMaximum(FileDivider.MAX_PART_SIZE / 1024);
 
         partLengthField = new JFormattedTextField(formatter);
         partLengthField.setValue(Settings.getDefaultPartLength() / 1024);

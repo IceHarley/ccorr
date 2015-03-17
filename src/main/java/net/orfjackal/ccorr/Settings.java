@@ -148,10 +148,10 @@ public class Settings implements Serializable {
      * allowed value will be used.
      */
     public static void setDefaultPartLength(long length) {
-        if (length < ChecksumFile.MIN_PART_SIZE) {
-            length = ChecksumFile.MIN_PART_SIZE;
-        } else if (length > ChecksumFile.MAX_PART_SIZE) {
-            length = ChecksumFile.MAX_PART_SIZE;
+        if (length < FileDivider.MIN_PART_SIZE) {
+            length = FileDivider.MIN_PART_SIZE;
+        } else if (length > FileDivider.MAX_PART_SIZE) {
+            length = FileDivider.MAX_PART_SIZE;
         }
         settings.defaultPartLength = length;
     }
