@@ -125,7 +125,7 @@ public class Settings implements Serializable {
      * Sets the default algorithm for the checksums.
      *
      * @param algorithm name of the algorithm
-     * @see CRC#getSupportedAlgorithms()
+     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
      */
     public static void setDefaultAlgorithm(String algorithm) {
         if (algorithm != null) {

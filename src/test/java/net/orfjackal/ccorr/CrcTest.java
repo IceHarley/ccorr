@@ -4,7 +4,8 @@
 
 package net.orfjackal.ccorr;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author Esko Luontola
@@ -14,7 +15,7 @@ public class CrcTest extends Assert {
     private static final byte[] DATA = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     private static String calculate(String algorithm, byte[] data) {
-        CRC md5 = new CRC(algorithm);
+        CRC md5 = new CRC(new CRCAlgorithmRepository().getByName(algorithm));
         md5.update(data, 0, data.length);
         return md5.getHexValue();
     }

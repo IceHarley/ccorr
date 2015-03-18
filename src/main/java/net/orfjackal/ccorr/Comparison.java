@@ -494,7 +494,7 @@ public class Comparison implements Serializable {
      * Returns the name of the algorithm that was used for making the checksums.
      *
      * @return the name of the algorithm
-     * @see CRC#getSupportedAlgorithms()
+     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
      */
     public String getAlgorithm() {
         if (files.length == 0) {

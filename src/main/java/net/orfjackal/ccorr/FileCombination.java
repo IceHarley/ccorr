@@ -265,7 +265,7 @@ public class FileCombination {
      *
      * @param algorithm the name of the algorithm to be used for making the checksum
      * @return the checksum, or null if operation failed
-     * @see CRC#getSupportedAlgorithms()
+     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
      * @see Settings#setProgressMonitor(ProgressMonitor)
      */
     public String countChecksum(String algorithm) {
@@ -286,7 +286,7 @@ public class FileCombination {
      * @param fc        the <code>FileCombination</code>s which to process
      * @param algorithm the name of the algorithm to be used for making the checksums
      * @return an array containing the checksums, or null if operation failed
-     * @see CRC#getSupportedAlgorithms()
+     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
      * @see Settings#setProgressMonitor(ProgressMonitor)
      */
     public static String[] countChecksums(FileCombination[] fc, String algorithm) {
@@ -315,7 +315,7 @@ public class FileCombination {
         // individual crc for each combination
         CRC[] crc = new CRC[fc.length];
         for (int i = 0; i < crc.length; i++) {
-            crc[i] = new CRC(algorithm);
+            crc[i] = new CRC(new CRCAlgorithmRepository().getByName(algorithm));
         }
 
         for (int item = 0; item < fc[0].getItems(); item++) {
