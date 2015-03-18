@@ -97,8 +97,8 @@ public class ComparisonTest extends Assert {
         File file1 = util.createDummyFile(PART_LENGTH * 2);
         File file2 = util.createDummyFile(PART_LENGTH * 2);
 
-        ChecksumFile cf1 = ChecksumFile.createChecksumFile(file1, PART_LENGTH, ALGORITHM);
-        ChecksumFile cf2 = ChecksumFile.createChecksumFile(file2, PART_LENGTH * 2, ALGORITHM);
+        ChecksumFile cf1 = ChecksumFileFactory.createChecksumFile(file1, PART_LENGTH, ALGORITHM);
+        ChecksumFile cf2 = ChecksumFileFactory.createChecksumFile(file2, PART_LENGTH * 2, ALGORITHM);
 
         c.addFile(cf1);
         c.addFile(cf2);
@@ -113,8 +113,8 @@ public class ComparisonTest extends Assert {
         File file1 = util.createDummyFile(PART_LENGTH * 2);
         File file2 = util.createDummyFile(PART_LENGTH * 2);
 
-        ChecksumFile cf1 = ChecksumFile.createChecksumFile(file1, PART_LENGTH, "CRC-32");
-        ChecksumFile cf2 = ChecksumFile.createChecksumFile(file2, PART_LENGTH, "MD5");
+        ChecksumFile cf1 = ChecksumFileFactory.createChecksumFile(file1, PART_LENGTH, "CRC-32");
+        ChecksumFile cf2 = ChecksumFileFactory.createChecksumFile(file2, PART_LENGTH, "MD5");
 
         c.addFile(cf1);
         c.addFile(cf2);

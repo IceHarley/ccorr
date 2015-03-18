@@ -99,8 +99,8 @@ public class ChecksumFileTest extends Assert {
         ChecksumFile original = util.createChecksumFile(PART_LENGTH * 2);
 
         File tmp = util.uniqueFile();
-        original.saveToFile(tmp);
-        ChecksumFile loaded = ChecksumFile.loadFromFile(tmp);
+        new ChecksumFileLoader(original).saveToFile(tmp);
+        ChecksumFile loaded = ChecksumFileLoader.loadFromFile(tmp);
 
         assertEquals(original.getParts(), loaded.getParts());
         assertEquals(original.getChecksum(0), loaded.getChecksum(0));
@@ -116,9 +116,9 @@ public class ChecksumFileTest extends Assert {
         ChecksumFile cf = util.createChecksumFile(length);
         File moved = util.createDummyFile(length);
 
-        cf.setSourceFile(moved);
+        ChecksumFile cfMoved = cf.setSourceFile(moved);
 
-        assertEquals(moved, cf.getSourceFile());
+        assertEquals(moved, cfMoved.getSourceFile());
     }
 
     @Test
@@ -128,8 +128,8 @@ public class ChecksumFileTest extends Assert {
         File original = cf.getSourceFile();
         File moved = util.createDummyFile(length - 1);
 
-        cf.setSourceFile(moved);
+        ChecksumFile cfMoved = cf.setSourceFile(moved);
 
-        assertEquals(original, cf.getSourceFile());
+        assertEquals(original, cfMoved.getSourceFile());
     }
 }

@@ -98,7 +98,7 @@ public class CombiningGoodPartsTest extends Assert {
         File result = util.uniqueFile();
         c.createGoodCombination().writeFile(result);
 
-        c.addFile(ChecksumFile.createChecksumFile(result, PART_LENGTH, ALGORITHM));
+        c.addFile(ChecksumFileFactory.createChecksumFile(result, PART_LENGTH, ALGORITHM));
         c.doCompare();
         assertEquals(MARK_IS_GOOD, c.getMark(DIFF_0, 2));
         assertEquals(MARK_IS_GOOD, c.getMark(DIFF_1, 2));

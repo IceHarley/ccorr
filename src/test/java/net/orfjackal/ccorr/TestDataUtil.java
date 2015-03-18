@@ -39,7 +39,7 @@ public class TestDataUtil {
     public ChecksumFile createChecksumFile(long length, long partLength, String algorithm, long... corruptedOffsets) throws IOException {
         File file = createDummyFile(length);
         corruptDataAtOffsets(file, corruptedOffsets);
-        return ChecksumFile.createChecksumFile(file, partLength, algorithm);
+        return ChecksumFileFactory.createChecksumFile(file, partLength, algorithm);
     }
 
     public File createDummyFile(long length) throws IOException {

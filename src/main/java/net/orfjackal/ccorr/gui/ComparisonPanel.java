@@ -336,14 +336,14 @@ public class ComparisonPanel extends TabPanel {
         Settings.setProgressMonitor(new ProgressMonitor(this,
                 "Creating checksums", "", 0, 0));
 
-        ChecksumFile cf = ChecksumFile.createChecksumFile(inputFile, partLength, algorithm);
+        ChecksumFile cf = ChecksumFileFactory.createChecksumFile(inputFile, partLength, algorithm);
 
         if (cf == null) {
             JOptionPane.showMessageDialog(this,
                     "An error happened in making the checksum file.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            if (!cf.saveToFile(outputFile)) {
+            if (!new ChecksumFileLoader(cf).saveToFile(outputFile)) {
                 JOptionPane.showMessageDialog(this,
                         "There was an error in writing " + outputFile,
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -433,7 +433,7 @@ public class ComparisonPanel extends TabPanel {
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            ChecksumFile cf = ChecksumFile.loadFromFile(chooser.getSelectedFile());
+            ChecksumFile cf = ChecksumFileLoader.loadFromFile(chooser.getSelectedFile());
             Settings.setCurrentDirectory(chooser.getSelectedFile());
             if (cf != null) {
                 tableModel.addFile(cf);

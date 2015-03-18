@@ -71,6 +71,10 @@ public class FileDivider {
         return partLength;
     }
 
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
     public void close() throws IOException{
         input.close();
     }
