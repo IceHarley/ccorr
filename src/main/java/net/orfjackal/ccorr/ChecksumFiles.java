@@ -63,6 +63,6 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
     }
 
     public boolean arePartsEquals(int i, int j, int part) {
-        return !files.get(i).getChecksum(part).equals(files.get(j).getChecksum(part));
+        return files.get(i).getChecksum(part).equals(files.get(j).getChecksum(part));
     }
 }

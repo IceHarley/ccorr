@@ -11,17 +11,17 @@ import java.io.Serializable;
 
 public class ComparisonItems implements Serializable {
     private ComparisonItem[][] items;
-    private int size1;
-    private int size2;
+    private int partsCount;
+    private int filesCount;
 
-    public ComparisonItems(int size1, int size2) {
-        items = new ComparisonItem[size1][size2];
-        this.size1 = size1;
-        this.size2 = size2;
+    public ComparisonItems(int partsCount, int filesCount) {
+        items = new ComparisonItem[partsCount][filesCount];
+        this.partsCount = partsCount;
+        this.filesCount = filesCount;
     }
 
-    public ComparisonItem get(int index1, int index2) {
-        return items[index1][index2];
+    public ComparisonItem get(int part, int file) {
+        return items[part][file];
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -30,18 +30,18 @@ public class ComparisonItems implements Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         items = (ComparisonItem[][]) in.readObject();
-        size1 = items.length;
-        size2 = 0;
-        if (size1 > 0)
-            size2 = items[0].length;
+        partsCount = items.length;
+        filesCount = 0;
+        if (partsCount > 0)
+            filesCount = items[0].length;
     }
 
-    public int size1() {
-        return size1;
+    public int partsCount() {
+        return partsCount;
     }
 
-    public int size2() {
-        return size2;
+    public int filesCount() {
+        return filesCount;
     }
 
     public void set(int index1, int index2, ComparisonItem value) {
@@ -50,11 +50,11 @@ public class ComparisonItems implements Serializable {
 
     public Mark findMark(Integer part, String checksum) {
         Mark result = Mark.UNDEFINED;
-        for (int i = 0; i < size1; i++) {
-            for (int j = 0; j < size2; j++) {
-                if (items[i][j].getPart() == part && items[i][j].getChecksum() == checksum)
-                    if (items[i][j].getMark() != Mark.UNDEFINED)
-                        result = items[i][j].getMark();
+        for (int p = 0; p < partsCount; p++) {
+            for (int f = 0; f < filesCount; f++) {
+                if (items[p][f].getPart() == part && items[p][f].getChecksum() == checksum)
+                    if (items[p][f].getMark() != Mark.UNDEFINED)
+                        result = items[p][f].getMark();
             }
         }
         return result;

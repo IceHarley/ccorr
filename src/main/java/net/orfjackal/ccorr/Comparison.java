@@ -24,6 +24,7 @@ public class Comparison implements Serializable {
     private String name;
     private ChecksumFiles files;
     private ComparisonItems items;
+    private ComparisonItemsList list;
     Similarity similarity;
     private boolean needsUpdating;
     private List<Integer> partsThatDiffer;
@@ -77,9 +78,9 @@ public class Comparison implements Serializable {
         numberOfDifferences = new NumberOfDifferences(files.size());
         compareEachFilesPair();
         ComparisonItems newItems = storeComparisonDataToNewItems();
+        storeComparisonDataToList();
 
-       List<Integer> filesToBeMirrored = findFilesToBeMirrored(newItems);
-
+        List<Integer> filesToBeMirrored = findFilesToBeMirrored(newItems);
         items = newItems;
         calculateSimilarity();
 
@@ -95,19 +96,21 @@ public class Comparison implements Serializable {
         }
     }
 
-    private void compareFiles(NumberOfDifferences numberOfDifferences, int i, int j) {
-        int shortest = files.findShorterFileParts(i, j);
+    private void compareFiles(NumberOfDifferences numberOfDifferences, int file1, int file2) {
+        int shortest = files.findShorterFileParts(file1, file2);
 
         for (int part = 0; part < shortest; part++) {
-            if (ChecksumFile.partPresentInFile(files.get(i), part) && ChecksumFile.partPresentInFile(files.get(j), part)    // takes short files in account
-                    && files.arePartsEquals(i, j, part)) {
+            if (ChecksumFile.partPresentInFile(files.get(file1), part) && ChecksumFile.partPresentInFile(files.get(file2), part)    // takes short files in account
+                    ) {
 
-                // difference found between files i and j (i is always lower index than j)
-                numberOfDifferences.add(i, j);
+                if (!files.arePartsEquals(file1, file2, part)) {
+                    // difference found between files file1 and file2 (file1 is always lower index than file2)
+                    numberOfDifferences.add(file1, file2);
 
-                // update our part list
-                if (!partsThatDiffer.contains(part)) {
-                    partsThatDiffer.add(part);
+                    // update our part list
+                    if (!partsThatDiffer.contains(part)) {
+                        partsThatDiffer.add(part);
+                    }
                 }
             }
         }
@@ -115,23 +118,38 @@ public class Comparison implements Serializable {
 
     private ComparisonItems storeComparisonDataToNewItems() {
         ComparisonItems newItems = new ComparisonItems(partsThatDiffer.size(), files.size());
-        for (int i = 0; i < newItems.size1(); i++) {
-            for (int j = 0; j < newItems.size2(); j++) {
-                Integer part = partsThatDiffer.get(i);
-                String checksum = files.get(j).getChecksum(part);
+        for (int p = 0; p < newItems.partsCount(); p++) {
+            for (int f = 0; f < newItems.filesCount(); f++) {
+                Integer part = partsThatDiffer.get(p);
+                String checksum = files.get(f).getChecksum(part);
+                Mark mark = items.findMark(part, checksum);
                 ComparisonItem item = new ComparisonItem(checksum, part);
-                item.setMark(items.findMark(part, checksum));
-                newItems.set(i, j, item);
+                item.setMark(mark);
+                newItems.set(p, f, item);
             }
         }
         return newItems;
     }
 
+    private void storeComparisonDataToList() {
+        list = new ComparisonItemsList();
+        for (int p = 0; p < partsThatDiffer.size(); p++) {
+            for (int f = 0; f < files.size(); f++) {
+                Integer part = partsThatDiffer.get(p);
+                String checksum = files.get(f).getChecksum(part);
+                if (list.findMark(part, checksum) == null) {
+                    ComparisonItem item = new ComparisonItem(checksum, part);
+                    list.add(item);
+                }
+            }
+        }
+    }
+
     private List<Integer> findFilesToBeMirrored(ComparisonItems newItems) {
         List<Integer> filesToBeMirrored = new ArrayList<Integer>();
-        if (items.size1() > 0 && newItems.size1() > 0) {
-            for (int newFile = 0; newFile < newItems.size2(); newFile++) {
-                for (int oldFile = 0; oldFile < items.size2(); oldFile++) {
+        if (items.partsCount() > 0 && newItems.partsCount() > 0) {
+            for (int newFile = 0; newFile < newItems.filesCount(); newFile++) {
+                for (int oldFile = 0; oldFile < items.filesCount(); oldFile++) {
                     if (files.get(newFile) == files.get(oldFile)) {
                         filesToBeMirrored.add(newFile);
                     }
@@ -139,6 +157,37 @@ public class Comparison implements Serializable {
             }
         }
         return filesToBeMirrored;
+    }
+
+    private void mirrorMarkers(List<Integer> filesToBeMirrored) {
+        if (Settings.isMarkMirroringEnabled()) {
+            for (Integer file : filesToBeMirrored) {
+                for (int j = 0; j < items.partsCount(); j++) {
+                    this.mirrorMark(j, file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Mirrors the mark in the given index. All items that have the same checksum and part as the given index, will get
+     * the same mark.
+     *
+     * @param difference the index of the difference
+     * @param file       the index of the file
+     * @see Settings#setMarkMirroringEnabled(boolean)
+     * @see Settings#isMarkMirroringEnabled()
+     */
+    public void mirrorMark(int difference, int file) {
+        if (this.isGoodIndex(difference, file)) {
+            String crc = items.get(difference, file).getChecksum();
+            Mark mark = items.get(difference, file).getMark();
+            for (int i = 0; i < items.filesCount(); i++) {
+                if (crc.equals(items.get(difference, i).getChecksum())) {
+                    items.get(difference, i).setMark(mark);
+                }
+            }
+        }
     }
 
     private void calculateSimilarity() {
@@ -152,24 +201,16 @@ public class Comparison implements Serializable {
         }
     }
 
-    private void mirrorMarkers(List<Integer> filesToBeMirrored) {
-        if (Settings.isMarkMirroringEnabled()) {
-            for (Integer file : filesToBeMirrored) {
-                for (int j = 0; j < items.size1(); j++) {
-                    this.mirrorMark(j, file);
-                }
-            }
-        }
-    }
-
     private void compareNoFile() {
         items = new ComparisonItems(0, 0);
+        list = new ComparisonItemsList();
         similarity = new Similarity(0);
         needsUpdating = false;
     }
 
     private void compareSingleFile() {
         items = new ComparisonItems(0, 0);
+        list = new ComparisonItemsList();
         similarity = new Similarity(1);
         similarity.set(0, 0, 1.0);
         needsUpdating = false;
@@ -184,7 +225,7 @@ public class Comparison implements Serializable {
         if (needsUpdating) {
             return -1;
         } else {
-            return items.size1();
+            return items.partsCount();
         }
     }
 
@@ -204,7 +245,7 @@ public class Comparison implements Serializable {
      * @return the index of the part, or -1 if parameter invalid
      */
     public int getPart(int difference) {
-        if (difference < 0 || difference >= items.size1()) {
+        if (difference < 0 || difference >= items.partsCount()) {
             return -1;
         } else {
             return items.get(difference, 0).getPart();
@@ -221,9 +262,9 @@ public class Comparison implements Serializable {
     private boolean isGoodIndex(int difference, int file) {
         return !(this.needsUpdating
                 || difference < 0
-                || difference >= items.size1()
+                || difference >= items.partsCount()
                 || file < 0
-                || file >= items.size2());
+                || file >= items.filesCount());
     }
 
     /**
@@ -347,27 +388,6 @@ public class Comparison implements Serializable {
             return result;
         } else {
             return Mark.NOT_EXISTS;
-        }
-    }
-
-    /**
-     * Mirrors the mark in the given index. All items that have the same checksum and part as the given index, will get
-     * the same mark.
-     *
-     * @param difference the index of the difference
-     * @param file       the index of the file
-     * @see Settings#setMarkMirroringEnabled(boolean)
-     * @see Settings#isMarkMirroringEnabled()
-     */
-    public void mirrorMark(int difference, int file) {
-        if (this.isGoodIndex(difference, file)) {
-            String crc = items.get(difference, file).getChecksum();
-            Mark mark = items.get(difference, file).getMark();
-            for (int i = 0; i < items.size2(); i++) {
-                if (crc.equals(items.get(difference, i).getChecksum())) {
-                    items.get(difference, i).setMark(mark);
-                }
-            }
         }
     }
 
@@ -497,7 +517,7 @@ public class Comparison implements Serializable {
             Log.print("createGoodCombination: Aborted, needsUpdating == true");
             return null;
         }
-        if (items.size1() == 0) {
+        if (items.partsCount() == 0) {
             Log.print("createGoodCombination: Aborted, no parts available");
             return null;
         }
@@ -507,7 +527,7 @@ public class Comparison implements Serializable {
         long nextStart = 0;
 
         item:
-        for (int i = 0; i < items.size1(); i++) {
+        for (int i = 0; i < items.partsCount(); i++) {
             for (int j = 0; j < this.files.size(); j++) {
                 if (items.get(i, j).getMark() == Mark.GOOD) {
                     ChecksumFile checksumFile = files.get(j);
@@ -515,7 +535,7 @@ public class Comparison implements Serializable {
                     long start = nextStart;
                     long end;
 
-                    if (i == (items.size1() - 1)) {
+                    if (i == (items.partsCount() - 1)) {
                         // last part
                         end = checksumFile.getSourceFileLength();
                     } else {
@@ -579,7 +599,7 @@ public class Comparison implements Serializable {
         /*
         * Check for valid range. Abort if invalid range is given.
         */
-        if (start < 0 || end >= items.size1() || start > end) {
+        if (start < 0 || end >= items.partsCount() || start > end) {
             Log.print("Comparison.markGoodParts: Invalid range, aborting.");
             return false;
         }
@@ -600,7 +620,7 @@ public class Comparison implements Serializable {
              * Increase the counter for existing checksums or
              * create a new entry in the hashtable.
              */
-            for (int col = 0; col < items.size2(); col++) {
+            for (int col = 0; col < items.filesCount(); col++) {
                 if (this.isGoodIndex(row, col)) {
                     // Skip column if past the end of file
                     if (items.get(row, col).getChecksum().length() == 0) {
@@ -671,13 +691,13 @@ public class Comparison implements Serializable {
         /*
          * Check for valid range. Abort if invalid range is given.
          */
-        if (start < 0 || end >= items.size1() || start > end) {
+        if (start < 0 || end >= items.partsCount() || start > end) {
             Log.print("Comparison.markRowUndefined: Invalid range, aborting.");
             return false;
         }
 
         for (int row = start; row <= end; row++) {
-            for (int col = 0; col < items.size2(); col++) {
+            for (int col = 0; col < items.filesCount(); col++) {
                 if (this.isGoodIndex(row, col)) {
                     setMark(row, col, Mark.UNDEFINED);
                 }
