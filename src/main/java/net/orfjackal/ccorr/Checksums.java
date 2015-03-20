@@ -33,6 +33,5 @@ public class Checksums implements Serializable {
 
     public String get(int index) {
         return isValidIndex(index) ? checksums.get(index) : null;
-        //return checksums.get(index);
     }
 }

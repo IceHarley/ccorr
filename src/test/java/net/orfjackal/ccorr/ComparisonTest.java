@@ -123,7 +123,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(0, c.getDifferences());
-        assertEquals(1.0, c.similarity.getSimilarity(0, 1), 0.0001);
+        assertEquals(1.0, c.similarity.get(0, 1), 0.0001);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(2, c.getDifferences());
-        assertEquals(0.6, c.similarity.getSimilarity(0, 1), 0.0001);
+        assertEquals(0.6, c.similarity.get(0, 1), 0.0001);
 
         String notCorrupt = "B70B4C26";
 
@@ -190,7 +190,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(0, c.getDifferences());
-        assertEquals(1.0, c.similarity.getSimilarity(0, 1), 0.0001);
+        assertEquals(1.0, c.similarity.get(0, 1), 0.0001);
     }
 
     @Test
@@ -207,9 +207,9 @@ public class ComparisonTest extends Assert {
         assertEquals("", c.getChecksum(difference, 0));
         assertEquals("B97A6DA7", c.getChecksum(difference, 1));
         assertEquals("B70B4C26", c.getChecksum(difference, 2));
-        assertEquals(Comparison.MARK_IS_BAD, c.getMark(difference, 0));
-        assertEquals(Comparison.MARK_IS_UNDEFINED, c.getMark(difference, 1));
-        assertEquals(Comparison.MARK_IS_UNDEFINED, c.getMark(difference, 2));
+        assertEquals(Mark.BAD, c.getMark(difference, 0));
+        assertEquals(Mark.UNDEFINED, c.getMark(difference, 1));
+        assertEquals(Mark.UNDEFINED, c.getMark(difference, 2));
     }
 
     @Test
@@ -219,7 +219,7 @@ public class ComparisonTest extends Assert {
         original.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_0));
         original.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_1));
         original.doCompare();
-        original.setMark(0, 0, Comparison.MARK_IS_BAD);
+        original.setMark(0, 0, Mark.BAD);
 
         File tmp = util.uniqueFile();
         ComparisonLoader originalLoader = new ComparisonLoader(original);

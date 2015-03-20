@@ -170,7 +170,7 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public void setMark(int row, int col, int mark) {
+    public void setMark(int row, int col, Mark mark) {
         isModified = true;
         comparison.setMark(row, col - 1, mark);
         fireTableRowsUpdated(row, row);
@@ -179,14 +179,14 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public int getMark(int row, int col) {
+    public Mark getMark(int row, int col) {
         return comparison.getMark(row, col - 1);
     }
 
     /**
      * Set multiple markers at once.
      */
-    public boolean setMarks(int[] rows, int[] cols, int mark) {
+    public boolean setMarks(int[] rows, int[] cols, Mark mark) {
 
         // do not allow more than one column to be set
         if (cols.length != 1) {
@@ -198,7 +198,7 @@ public class ComparisonTableModel extends AbstractTableModel {
             return false;
         }
 
-        int oldMark = getMark(rows[0], cols[0]);
+        Mark oldMark = getMark(rows[0], cols[0]);
 
         // all selected cells must have the same old marker
         for (int row : rows) {
@@ -221,9 +221,9 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public int nextMark(int row, int col) {
+    public Mark nextMark(int row, int col) {
         isModified = true;
-        int result = this.comparison.nextMark(row, col - 1);
+        Mark result = this.comparison.nextMark(row, col - 1);
         fireTableRowsUpdated(row, row);
         return result;
     }

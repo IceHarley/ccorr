@@ -68,7 +68,6 @@ public class ChecksumFileTest extends Assert {
         ChecksumFile cf = util.createChecksumFile(PART_LENGTH * parts);
 
         assertTrue(cf.getParts() >= parts);
-//        cf.getChecksum(tooHighIndex);
         assertEquals(null, cf.getChecksum(tooHighIndex));
         assertEquals(-1, cf.getStartOffset(tooHighIndex));
         assertEquals(-1, cf.getEndOffset(tooHighIndex));

@@ -33,10 +33,6 @@ public class Similarity implements Serializable{
         return similarity[index1][index2];
     }
 
-    public double getSimilarity(int file1, int file2) {
-        return get(file1, file2);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

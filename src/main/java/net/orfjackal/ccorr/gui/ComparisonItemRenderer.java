@@ -45,19 +45,19 @@ class ComparisonItemRenderer extends JLabel implements TableCellRenderer {
             Color color;
             switch (item.getMark()) {
                 default:
-                case Comparison.MARK_IS_UNDEFINED:
+                case UNDEFINED:
                     color = COLOR_UNDEFINED;
                     break;
 
-                case Comparison.MARK_IS_GOOD:
+                case GOOD:
                     color = COLOR_GOOD;
                     break;
 
-                case Comparison.MARK_IS_BAD:
+                case BAD:
                     color = COLOR_BAD;
                     break;
 
-                case Comparison.MARK_IS_UNSURE:
+                case UNSURE:
                     color = COLOR_UNSURE;
                     break;
             }

@@ -297,6 +297,7 @@
     <dictionary name="olev">
       <words>
         <w>esko</w>
+        <w>hashtable</w>
         <w>luontola</w>
         <w>orfjackal</w>
       </words>

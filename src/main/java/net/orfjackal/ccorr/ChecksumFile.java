@@ -25,6 +25,10 @@ public class ChecksumFile implements Serializable {
         this.sourceFileLength = sourceFileLength;
     }
 
+    static boolean partPresentInFile(ChecksumFile file, int part) {
+        return file.getChecksum(part) != null;
+    }
+
     public int getParts() {
         return checksums.size();
     }

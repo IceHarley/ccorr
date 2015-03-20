@@ -32,13 +32,6 @@ public class ComparisonPanel extends TabPanel {
     private final ComparisonTableModel tableModel;
 
     /**
-     * Creates a new ComparisonPanel that uses a new Comparison.
-     */
-    public ComparisonPanel() {
-        this(new Comparison());
-    }
-
-    /**
      * Creates a new ComparisonPanel that uses the given Comparison.
      *
      * @param comparison the Comparison to be used, or null for a new Comparison
@@ -566,7 +559,7 @@ public class ComparisonPanel extends TabPanel {
      *
      * @param mark new marker value to be set
      */
-    private void markSelected(int mark) {
+    private void markSelected(Mark mark) {
         int[] rows = table.getSelectedRows();
         int[] cols = table.getSelectedColumns();
         tableModel.setMarks(rows, cols, mark);
@@ -576,35 +569,35 @@ public class ComparisonPanel extends TabPanel {
      * Marks the selected cell's ComparisonItem "good".
      */
     public void markSelectedGood() {
-        markSelected(Comparison.MARK_IS_GOOD);
+        markSelected(Mark.GOOD);
     }
 
     /**
      * Marks the selected cell's ComparisonItem "bad".
      */
     public void markSelectedBad() {
-        markSelected(Comparison.MARK_IS_BAD);
+        markSelected(Mark.BAD);
     }
 
     /**
      * Marks the selected cell's ComparisonItem "unsure".
      */
     public void markSelectedUnsure() {
-        markSelected(Comparison.MARK_IS_UNSURE);
+        markSelected(Mark.UNSURE);
     }
 
     /**
      * Marks the selected cell's ComparisonItem "undefined".
      */
     public void markSelectedUndefined() {
-        markSelected(Comparison.MARK_IS_UNDEFINED);
+        markSelected(Mark.UNDEFINED);
     }
 
     /**
      * Changes the mark of the selected cell's ComparisonItem.
      */
     public void markSelectedNext() {
-        markSelected(Comparison.NEXT_MARK);
+        markSelected(Mark.NEXT);
     }
 
     /**
@@ -615,7 +608,7 @@ public class ComparisonPanel extends TabPanel {
     }
 
     /**
-     * Sets all parts in the table to MARK_IS_UNDEFINED.
+     * Sets all parts in the table to UNDEFINED.
      */
     public void markTableUndefined() {
         tableModel.markRowUndefined(0, table.getRowCount() - 1);

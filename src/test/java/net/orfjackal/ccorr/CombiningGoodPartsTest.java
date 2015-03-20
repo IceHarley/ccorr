@@ -9,7 +9,6 @@ import org.junit.*;
 import javax.swing.*;
 import java.io.*;
 
-import static net.orfjackal.ccorr.Comparison.*;
 import static net.orfjackal.ccorr.TestDataUtil.*;
 import static org.mockito.Mockito.*;
 
@@ -44,8 +43,8 @@ public class CombiningGoodPartsTest extends Assert {
 
     private Comparison comparisonWithTwoDiffsMarkedGood() throws IOException {
         Comparison c = comparisonWithTwoDiffs();
-        c.setMark(DIFF_0, 1, MARK_IS_GOOD);
-        c.setMark(DIFF_1, 0, MARK_IS_GOOD);
+        c.setMark(DIFF_0, 1, Mark.GOOD);
+        c.setMark(DIFF_1, 0, Mark.GOOD);
         return c;
     }
 
@@ -78,8 +77,8 @@ public class CombiningGoodPartsTest extends Assert {
     public void when_not_all_differences_are_marked_good_then_a_good_combination_cannot_be_created() throws IOException {
         Comparison c = comparisonWithTwoDiffs();
 
-        c.setMark(DIFF_0, 0, MARK_IS_BAD);
-        c.setMark(DIFF_0, 1, MARK_IS_GOOD);
+        c.setMark(DIFF_0, 0, Mark.BAD);
+        c.setMark(DIFF_0, 1, Mark.GOOD);
 
         assertNull(c.createGoodCombination());
     }
@@ -100,8 +99,8 @@ public class CombiningGoodPartsTest extends Assert {
 
         c.addFile(ChecksumFileFactory.createChecksumFile(result, PART_LENGTH, ALGORITHM));
         c.doCompare();
-        assertEquals(MARK_IS_GOOD, c.getMark(DIFF_0, 2));
-        assertEquals(MARK_IS_GOOD, c.getMark(DIFF_1, 2));
+        assertEquals(Mark.GOOD, c.getMark(DIFF_0, 2));
+        assertEquals(Mark.GOOD, c.getMark(DIFF_1, 2));
     }
 
     @Test

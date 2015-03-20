@@ -21,6 +21,14 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         this.files = new ArrayList<ChecksumFile>();
     }
 
+    public int findShorterFileParts(int index1, int index2) {
+        int shortest = files.get(index1).getParts();
+        if (files.get(index2).getParts() < shortest) {
+            shortest = files.get(index2).getParts();
+        }
+        return shortest;
+    }
+
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(files.toArray(new ChecksumFile[files.size()]));
     }
@@ -46,12 +54,15 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return files.iterator();
     }
 
-
     public int indexOf(ChecksumFile file) {
         return files.indexOf(file);
     }
 
     public boolean remove(ChecksumFile file) {
         return files.remove(file);
+    }
+
+    public boolean arePartsEquals(int i, int j, int part) {
+        return !files.get(i).getChecksum(part).equals(files.get(j).getChecksum(part));
     }
 }
