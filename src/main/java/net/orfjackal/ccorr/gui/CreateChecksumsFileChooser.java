@@ -63,7 +63,7 @@ public class CreateChecksumsFileChooser extends JFileChooser {
     }
 
     private void initAlgorithmInputField() {
-        algorithmField = new JComboBox(CRCAlgorithmRepository.getSupportedAlgorithms());
+        algorithmField = new JComboBox(CRCAlgorithmFactory.getSupportedAlgorithms());
         algorithmField.setSelectedItem(Settings.getDefaultAlgorithm());
     }
 

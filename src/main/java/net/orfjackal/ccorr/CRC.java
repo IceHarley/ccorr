@@ -4,8 +4,6 @@
 
 package net.orfjackal.ccorr;
 
-import jonelo.jacksum.algorithm.*;
-
 /**
  * A class that can be used to compute the checksum of a data stream with many different algorithms.
  *
@@ -33,7 +31,7 @@ public class CRC {
      * will be used.
      *
      * @param algorithm Name of the algorithm as defined in <code>getSupportedAlgorithms</code>.
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
      */
     public CRC(CRCAlgorithm algorithm) {
         this.algorithm = algorithm;
@@ -98,7 +96,7 @@ public class CRC {
         return this.algorithm.getName();
     }
 
-    String calculateChecksum(Buffer buffer) {
+    public String calculateChecksum(Buffer buffer) {
         reset();
         update(buffer.getBytes(), 0, buffer.getLength());
         return getHexValue();

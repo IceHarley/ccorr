@@ -20,6 +20,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * The Comparison object that this ComparisonPanel represents.
      */
     private Comparison comparison;
+    private ComparisonLoader comparisonLoader;
 
     /**
      * Indicates if this Comparison has been modified after saving.
@@ -46,6 +47,7 @@ public class ComparisonTableModel extends AbstractTableModel {
             comparison = new Comparison();
         }
         this.comparison = comparison;
+        this.comparisonLoader = new ComparisonLoader(comparison);
     }
 
     /**
@@ -154,15 +156,6 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public void doCompare() {
-        this.isModified = true;
-        this.comparison.doCompare();
-        this.fireTableStructureChanged();
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
     public int getFiles() {
         return this.comparison.getFiles();
     }
@@ -252,21 +245,6 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public String getComments() {
-        return comparison.getComments();
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
-    public void setComments(String comments) {
-        isModified = true;
-        comparison.setComments(comments);
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
     public String getAlgorithm() {
         return comparison.getAlgorithm();
     }
@@ -284,16 +262,6 @@ public class ComparisonTableModel extends AbstractTableModel {
     public void addFile(ChecksumFile file) {
         isModified = true;
         comparison.addFile(file);
-        comparison.doCompare();
-        fireTableStructureChanged();
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
-    public void removeFile(ChecksumFile file) {
-        isModified = true;
-        comparison.removeFile(file);
         comparison.doCompare();
         fireTableStructureChanged();
     }
@@ -327,29 +295,15 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public int getPossibleCombinations() {
-        return comparison.getPossibleCombinations();
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
-    public FileCombination[] createPossibleCombinations() {
-        return comparison.createPossibleCombinations();
-    }
-
-    /**
-     * Represents the corresponding method in the comparison.
-     */
     public File getSavedAsFile() {
-        return comparison.getSavedAsFile();
+        return comparisonLoader.getSavedAsFile();
     }
 
     /**
      * Represents the corresponding method in the comparison.
      */
     public boolean saveToFile(File file) {
-        boolean successful = this.comparison.saveToFile(file);
+        boolean successful = comparisonLoader.saveToFile(file);
         if (successful) {
             isModified = false;
         }

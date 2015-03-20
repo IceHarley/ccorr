@@ -109,7 +109,7 @@ public class CombiningGoodPartsTest extends Assert {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
         ProgressMonitor monitor = spy(new ProgressMonitor(null, null, null, 0, 0));
-        Settings.setProgressMonitor(monitor);
+        ProgressMonitorRepository.set(monitor);
 
         File result = util.uniqueFile();
         c.createGoodCombination().writeFile(result);

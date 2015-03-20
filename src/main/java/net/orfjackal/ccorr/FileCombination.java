@@ -134,11 +134,11 @@ public class FileCombination {
      *
      * @param file the file which is written
      * @return true if successful, otherwise false
-     * @see Settings#setProgressMonitor(ProgressMonitor)
+     * @see ProgressMonitorRepository#set(javax.swing.ProgressMonitor)
      */
     public boolean writeFile(File file) {
         boolean successful;
-        ProgressMonitor monitor = Settings.getProgressMonitor();
+        ProgressMonitor monitor = ProgressMonitorRepository.get();
 
         BufferedInputStream input;
         BufferedOutputStream output;
@@ -265,8 +265,8 @@ public class FileCombination {
      *
      * @param algorithm the name of the algorithm to be used for making the checksum
      * @return the checksum, or null if operation failed
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
-     * @see Settings#setProgressMonitor(ProgressMonitor)
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
+     * @see ProgressMonitorRepository#set(javax.swing.ProgressMonitor)
      */
     public String countChecksum(String algorithm) {
         FileCombination[] fc = {this};
@@ -286,8 +286,8 @@ public class FileCombination {
      * @param fc        the <code>FileCombination</code>s which to process
      * @param algorithm the name of the algorithm to be used for making the checksums
      * @return an array containing the checksums, or null if operation failed
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
-     * @see Settings#setProgressMonitor(ProgressMonitor)
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
+     * @see ProgressMonitorRepository#set(javax.swing.ProgressMonitor)
      */
     public static String[] countChecksums(FileCombination[] fc, String algorithm) {
 
@@ -315,7 +315,7 @@ public class FileCombination {
         // individual crc for each combination
         CRC[] crc = new CRC[fc.length];
         for (int i = 0; i < crc.length; i++) {
-            crc[i] = new CRC(new CRCAlgorithmRepository().getByName(algorithm));
+            crc[i] = new CRC(CRCAlgorithmFactory.getByName(algorithm));
         }
 
         for (int item = 0; item < fc[0].getItems(); item++) {

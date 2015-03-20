@@ -4,7 +4,6 @@
 
 package net.orfjackal.ccorr;
 
-import javax.swing.*;
 import java.io.*;
 
 /**
@@ -26,8 +25,8 @@ public class ChecksumFileFactory  {
      *                   <code>MAX_PART_SIZE</code>, the smallest or biggest allowed value will be used
      * @param algorithm  the name of the  algorithm to be used for making the checksums
      * @return a new <code>ChecksumFile</code> object if operation is successful, otherwise null
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
-     * @see Settings#setProgressMonitor(ProgressMonitor)
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
+     * @see ProgressMonitorRepository#set(javax.swing.ProgressMonitor)
      */
     public static ChecksumFile createChecksumFile(File file, long partLength, String algorithm) {
         return generateChecksums(file, partLength, algorithm);
@@ -43,14 +42,14 @@ public class ChecksumFileFactory  {
      * @param algorithm  the name of the  algorithm to be used for making the checksums
      * @return true if operation is successful, otherwise false.
      * @see #createChecksumFile(java.io.File, long, String)
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
-     * @see Settings#setProgressMonitor(ProgressMonitor)
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
+     * @see ProgressMonitorRepository#set(javax.swing.ProgressMonitor)
      */
     private static ChecksumFile generateChecksums(File sourceFile, long partLength, String algorithm) {
         Log.print("generateChecksums(" + partLength + ", " + algorithm + ") from " + sourceFile);
 
         FileDivider fileDivider = new FileDivider(sourceFile, partLength);
-        FileChecksumsCalculator checksumsCalculator = new MonitoredChecksumsCalculator(fileDivider, new CRC(new CRCAlgorithmRepository().getByName(algorithm)));
+        FileChecksumsCalculator checksumsCalculator = new MonitoredChecksumsCalculator(fileDivider, new CRC(CRCAlgorithmFactory.getByName(algorithm)));
         ChecksumFile checksumFile = checksumsCalculator.calculateChecksums();
 
         boolean successful = !ChecksumFile.EMPTY_DATA.equals(checksumFile);

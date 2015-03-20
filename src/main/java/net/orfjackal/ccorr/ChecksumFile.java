@@ -30,6 +30,9 @@ public class ChecksumFile implements Serializable {
     }
 
     public String getChecksum(int part) {
+//        if (!checksums.isValidIndex(part)) {
+//            throw new IndexOutOfBoundsException();
+//        }
         return checksums.get(part);
     }
 

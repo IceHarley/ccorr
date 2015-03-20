@@ -29,16 +29,6 @@ public class Comparison implements Serializable {
     public static final int MARK_IS_UNSURE = 3;
 
     /**
-     * The file extension used by CCorr Comparison Project.
-     */
-    public static final String FILE_EXTENSION = "ccp";
-
-    /**
-     * The the file type name of CCorr Comparison Project.
-     */
-    public static final String FILE_TYPE = "CCorr Comparison Project";
-
-    /**
      * The name of the comparison.
      */
     private String name;
@@ -46,7 +36,7 @@ public class Comparison implements Serializable {
     /**
      * The <code>ChecksumFile</code> objects that are being compared.
      */
-    private ChecksumFile[] files;
+    private ChecksumFiles files;
 
     /**
      * Used to store the mark information.
@@ -56,7 +46,7 @@ public class Comparison implements Serializable {
     /**
      * Used to store the similarity between the compared files.
      */
-    private double[][] similarity;
+    Similarity similarity;
 
     /**
      * Indicates in the comparison data needs to be updated.
@@ -66,25 +56,14 @@ public class Comparison implements Serializable {
     private boolean needsUpdating;
 
     /**
-     * Comments connected to this <code>Comparison</code>.
-     */
-    private String comments;
-
-    /**
-     * The file to which this <code>Comparison</code> was saved.
-     */
-    private File savedAsFile;
-
-    /**
      * Creates a new empty <code>Comparison</code>.
      */
     public Comparison() {
         this.name = "";
-        this.files = new ChecksumFile[0];
+        this.files = new ChecksumFiles();
         this.items = new ComparisonItem[0][0];
-        this.similarity = new double[0][0];
+        this.similarity = new Similarity(0);
         this.needsUpdating = false;
-        this.comments = "";
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -94,18 +73,14 @@ public class Comparison implements Serializable {
         out.writeObject(items);
         out.writeObject(similarity);
         out.writeBoolean(needsUpdating);
-        out.writeObject(comments);
-        out.writeObject(savedAsFile);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         name = (String) in.readObject();
-        files = (ChecksumFile[]) in.readObject();
+        files = (ChecksumFiles) in.readObject();
         items = (ComparisonItem[][]) in.readObject();
-        similarity = (double[][]) in.readObject();
+        similarity = (Similarity) in.readObject();
         needsUpdating = in.readBoolean();
-        comments = (String) in.readObject();
-        savedAsFile = (File) in.readObject();
     }
 
     /**
@@ -113,31 +88,31 @@ public class Comparison implements Serializable {
      */
     public void doCompare() {
         Vector<Integer> partsThatDiffer = new Vector<Integer>();
-        int[][] numberOfDifferences = new int[files.length][files.length];
+        int[][] numberOfDifferences = new int[files.size()][files.size()];
         Vector<Integer> filesToBeMirrored = new Vector<Integer>();
 
-        if (files.length > 1) {
+        if (files.size() > 1) {
 
-            // compare all files to eachother to find similar files
-            for (int i = 0; i < (files.length - 1); i++) {
-                for (int j = (i + 1); j < files.length; j++) {
+            // compare all files to each other to find similar files
+            for (int i = 0; i < (files.size() - 1); i++) {
+                for (int j = (i + 1); j < files.size(); j++) {
 
                     // one file being shorter does not necessarily make it different
-                    int shortest = files[i].getParts();
-                    if (files[j].getParts() < shortest) {
-                        shortest = files[j].getParts();
+                    int shortest = files.get(i).getParts();
+                    if (files.get(j).getParts() < shortest) {
+                        shortest = files.get(j).getParts();
                     }
 
                     for (int part = 0; part < shortest; part++) {
-                        if (files[i].getChecksum(part) != null && files[j].getChecksum(part) != null    // takes short files in account
-                                && !files[i].getChecksum(part).equals(files[j].getChecksum(part))) {
+                        if (files.get(i).getChecksum(part) != null && files.get(j).getChecksum(part) != null    // takes short files in account
+                                && !files.get(i).getChecksum(part).equals(files.get(j).getChecksum(part))) {
 
                             // difference found between files i and j (i is always lower index than j)
                             numberOfDifferences[i][j]++;
 
                             // update our part list
                             if (!partsThatDiffer.contains(part)) {
-                                partsThatDiffer.add((Integer) part);
+                                partsThatDiffer.add(part);
                             }
                         }
                     }
@@ -152,10 +127,11 @@ public class Comparison implements Serializable {
             Arrays.sort(partsThatDiffer2);
 
             // store gathered comparison data to new arrays
-            ComparisonItem[][] newItems = new ComparisonItem[partsThatDiffer2.length][files.length];
+            ComparisonItem[][] newItems = new ComparisonItem[partsThatDiffer2.length][files.size()];
             for (int i = 0; i < newItems.length; i++) {
                 for (int j = 0; j < newItems[i].length; j++) {
-                    newItems[i][j] = new ComparisonItem(partsThatDiffer2[i], files[j]);
+//                    newItems[i][j] = new ComparisonItem(partsThatDiffer2[i], files[j]);
+                    newItems[i][j] = new ComparisonItem(files.get(j).getChecksum(partsThatDiffer2[i]), partsThatDiffer2[i]);
                 }
             }
 
@@ -166,7 +142,8 @@ public class Comparison implements Serializable {
                     for (int oldFile = 0; oldFile < items[0].length; oldFile++) {
 
                         // find the same old files from the new array
-                        if (newItems[0][newFile].getFile() == items[0][oldFile].getFile()) {
+//                        if (newItems[0][newFile].getFile() == items[0][oldFile].getFile()) {
+                        if (files.get(newFile) == files.get(oldFile)) {
                             int jStartIndex = 0;
                             filesToBeMirrored.add(newFile);
 
@@ -174,7 +151,8 @@ public class Comparison implements Serializable {
                             for (ComparisonItem[] newItem : newItems) {
                                 for (int j = jStartIndex; j < items.length; j++) {
 
-                                    if (newItem[newFile].getFile() == items[j][oldFile].getFile()
+//                                    if (newItem[newFile].getFile() == items[j][oldFile].getFile()
+                                    if (files.get(newFile) == files.get(oldFile)
                                             && newItem[newFile].getPart() == items[j][oldFile].getPart()
                                             && newItem[newFile].getChecksum().equals(items[j][oldFile].getChecksum())) {
                                         newItem[newFile].setMark(items[j][oldFile].getMark());
@@ -192,26 +170,25 @@ public class Comparison implements Serializable {
             items = newItems;
 
             // process and save data for similarity
-            similarity = new double[files.length][files.length];
+            similarity = new Similarity(files.size());
             for (int i = 0; i < numberOfDifferences.length; i++) {          // each file is also compared to itself
                 for (int j = i; j < numberOfDifferences[i].length; j++) {
-                    int shortest = files[i].getParts();
-                    if (files[j].getParts() < shortest) {
-                        shortest = files[j].getParts();
+                    int shortest = files.get(i).getParts();
+                    if (files.get(j).getParts() < shortest) {
+                        shortest = files.get(j).getParts();
                     }
                     double d = 1.0 - ((1.0 * numberOfDifferences[i][j]) / shortest);
-                    similarity[i][j] = d;
-                    similarity[j][i] = d;
+                    similarity.set(i, j, d);
                 }
             }
 
-        } else if (files.length == 1) {
+        } else if (files.size() == 1) {
             items = new ComparisonItem[0][0];
-            similarity = new double[1][1];
-            similarity[0][0] = 1.0;
-        } else if (files.length == 0) {
+            similarity = new Similarity(1);
+            similarity.set(0, 0, 1.0);
+        } else if (files.size() == 0) {
             items = new ComparisonItem[0][0];
-            similarity = new double[0][0];
+            similarity = new Similarity(0);
         }
 
         needsUpdating = false;
@@ -252,7 +229,7 @@ public class Comparison implements Serializable {
      * @return the number of files
      */
     public int getFiles() {
-        return this.files.length;
+        return this.files.size();
     }
 
     /**
@@ -266,26 +243,6 @@ public class Comparison implements Serializable {
             return -1;
         } else {
             return this.items[difference][0].getPart();
-        }
-    }
-
-    /**
-     * Returns the similarity between two compared files. Similarity is indicated by a double between 0.0 and 1.0; the
-     * greater the more similar.
-     *
-     * @param file1 the index of the first file
-     * @param file2 the index of the second file
-     * @return similarity between the two files
-     */
-    public double getSimilarity(int file1, int file2) {
-        if (this.needsUpdating
-                || file1 < 0
-                || file1 >= this.similarity.length
-                || file2 < 0
-                || file2 >= this.similarity.length) {       // similarity is always a square array
-            return -1;
-        } else {
-            return this.similarity[file1][file2];
         }
     }
 
@@ -344,9 +301,12 @@ public class Comparison implements Serializable {
         if (this.isGoodIndex(difference, 0)) {
             long offset = -1;
             for (int i = 0; i < this.getFiles(); i++) {
-                if (this.items[difference][i].getStartOffset() > offset) {
-                    offset = this.items[difference][i].getStartOffset();
+                if (files.get(i).getStartOffset(items[difference][i].getPart()) > offset) {
+                    offset = files.get(i).getStartOffset(items[difference][i].getPart());
                 }
+//                if (this.items[difference][i].getStartOffset() > offset) {
+//                    offset = this.items[difference][i].getStartOffset();
+//                }
             }
             return offset;
         } else {
@@ -364,9 +324,12 @@ public class Comparison implements Serializable {
         if (this.isGoodIndex(difference, 0)) {
             long offset = -1;
             for (int i = 0; i < this.getFiles(); i++) {
-                if (this.items[difference][i].getEndOffset() > offset) {
-                    offset = this.items[difference][i].getEndOffset();
+                if (files.get(i).getEndOffset(items[difference][i].getPart()) > offset) {
+                    offset = files.get(i).getEndOffset(items[difference][i].getPart());
                 }
+//                if (this.items[difference][i].getEndOffset() > offset) {
+//                    offset = this.items[difference][i].getEndOffset();
+//                }
             }
             return offset;
         } else {
@@ -469,38 +432,16 @@ public class Comparison implements Serializable {
     }
 
     /**
-     * Returns the comments of this <code>Comparison</code>.
-     *
-     * @return the comments
-     */
-    public String getComments() {
-        return this.comments;
-    }
-
-    /**
-     * Sets the comments for this <code>Comparison</code>.
-     *
-     * @param comments the comments, or null to empty them
-     */
-    public void setComments(String comments) {
-        if (comments != null) {
-            this.comments = comments;
-        } else {
-            this.comments = "";
-        }
-    }
-
-    /**
      * Returns the name of the algorithm that was used for making the checksums.
      *
      * @return the name of the algorithm
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
      */
     public String getAlgorithm() {
-        if (files.length == 0) {
+        if (files.size() == 0) {
             return null;
         } else {
-            return files[0].getAlgorithm();
+            return files.get(0).getAlgorithm();
         }
     }
 
@@ -510,10 +451,10 @@ public class Comparison implements Serializable {
      * @return the length in bytes
      */
     public long getPartLength() {
-        if (files.length == 0) {
+        if (files.size() == 0) {
             return -1;
         } else {
-            return files[0].getPartLength();
+            return files.get(0).getPartLength();
         }
     }
 
@@ -524,10 +465,10 @@ public class Comparison implements Serializable {
      * @return the requested <code>ChecksumFile</code>, or null if parameter invalid
      */
     public ChecksumFile getFile(int file) {
-        if (file < 0 || file >= this.files.length) {
+        if (file < 0 || file >= this.files.size()) {
             return null;
         } else {
-            return this.files[file];
+            return this.files.get(file);
         }
     }
 
@@ -549,17 +490,10 @@ public class Comparison implements Serializable {
             }
 
             // no duplicates wanted
-            for (ChecksumFile f : this.files) {
-                if (file == f) {
-                    return;
-                }
-            }
+            for (ChecksumFile f : this.files)
+                if (file == f) return;
 
-            // resize files array to fit the new file
-            ChecksumFile[] newArray = new ChecksumFile[this.files.length + 1];
-            System.arraycopy(this.files, 0, newArray, 0, this.files.length);
-            newArray[newArray.length - 1] = file;
-            this.files = newArray;
+            files.add(file);
             this.needsUpdating = true;      // somebody should run doCompare()
         }
     }
@@ -572,8 +506,8 @@ public class Comparison implements Serializable {
      * @param file the index of the file
      */
     public void removeFile(int file) {
-        if (file >= 0 && file < this.files.length) {
-            this.removeFile(this.files[file]);
+        if (file >= 0 && file < this.files.size()) {
+            this.removeFile(this.files.get(file));
         }
     }
 
@@ -585,26 +519,10 @@ public class Comparison implements Serializable {
      */
     public void removeFile(ChecksumFile file) {
 
-        // find the right index...
-        int removeFromIndex = -1;
-        for (int i = 0; i < this.files.length; i++) {
-            if (file == this.files[i]) {
-                removeFromIndex = i;
-                break;
-            }
-        }
-
-        // ...and remove the file
-        if (removeFromIndex >= 0) {
-            ChecksumFile[] newArray = new ChecksumFile[this.files.length - 1];
-            for (int i = removeFromIndex; i < (this.files.length - 1); i++) {
-                this.files[i] = this.files[i + 1];
-            }
-            System.arraycopy(this.files, 0, newArray, 0, newArray.length);
-            this.files = newArray;
-            this.needsUpdating = true;      // somebody should run doCompare()
-
+        int removeFromIndex = files.indexOf(file);
+        if (files.remove(file)) {
             Log.print("Comparison.removeFile: File #" + (removeFromIndex + 1) + " removed.");
+            this.needsUpdating = true;
         }
     }
 
@@ -631,23 +549,28 @@ public class Comparison implements Serializable {
 
         item:
         for (int i = 0; i < this.items.length; i++) {
-            for (int j = 0; j < this.files.length; j++) {
+            for (int j = 0; j < this.files.size(); j++) {
                 if (this.items[i][j].getMark() == MARK_IS_GOOD) {
-                    File file = this.items[i][j].getFile().getSourceFile();
+                    //File file = this.items[i][j].getFile().getSourceFile();
+                    ChecksumFile checksumFile = files.get(j);
+                    File file = checksumFile.getSourceFile();
                     long start = nextStart;
                     long end;
 
                     if (i == (this.items.length - 1)) {
                         // last part
-                        end = this.items[i][j].getFile().getSourceFileLength();
+//                        end = this.items[i][j].getFile().getSourceFileLength();
+                        end = checksumFile.getSourceFileLength();
                     } else {
-                        end = this.items[i][j].getEndOffset();
-                        nextStart = this.items[i][j].getEndOffset() + 1;
+//                        end = this.items[i][j].getEndOffset();
+                        end = checksumFile.getEndOffset(i);
+//                        nextStart = this.items[i][j].getEndOffset() + 1;
+                        nextStart = end + 1;
                     }
 
                     fc.addItem(file, start, end);
                     continue item;
-                } else if (j == (this.files.length - 1)) {
+                } else if (j == (this.files.size() - 1)) {
                     // no good parts found, abort
                     fc = null;
                     break item;
@@ -659,298 +582,32 @@ public class Comparison implements Serializable {
         return fc;
     }
 
-    /**
-     * Returns the number of all <code>FileCombination</code>s that are not marked as bad. If in one difference index
-     * there is no item with MARK_IS_GOOD as the marker, marks MARK_IS_UNDEFINED and MARK_IS_UNSURE will be looked for.
-     * If in one difference index all items are marked as MARK_IS_BAD, no combinations are possible.
-     *
-     * @return the number of the combinations, or -1 if updating is needed or if there are no files
-     */
-    public int getPossibleCombinations() {
-        if (this.needsUpdating) {
-            Log.print("getPossibleCombinations = -1 (needsUpdating == true)");
-            return -1;
-        }
-        if (this.items.length == 0) {
-            Log.print("getPossibleCombinations = -1 (no parts available)");
-            return -1;
-        }
-
-        int result = 1;
-
-        item:
-        for (int item = 0; item < this.items.length; item++) {
-            int inThisItem = 0;
-            boolean isPossible = false;
-
-            for (int i = 0; i < this.files.length; i++) {
-                if (this.items[item][i].getMark() == MARK_IS_GOOD) {
-                    continue item;
-                } else if (this.items[item][i].getMark() == MARK_IS_UNSURE
-                        || this.items[item][i].getMark() == MARK_IS_UNDEFINED) {
-                    inThisItem++;
-                    isPossible = true;
-                }
-            }
-
-            if (isPossible) {
-                result = result * inThisItem;
-            } else {
-                Log.print("getPossibleCombinations = 0 (item " + item + " is impossible)");
-                return 0;
-            }
-        }
-
-        Log.print("getPossibleCombinations = " + result);
-        return result;
-    }
-
-    /**
-     * Returns all <code>FileCombination</code>s that are not marked as bad. The number of combinations is that returned
-     * by {@link #getPossibleCombinations() getPossibleCombinations}.
-     *
-     * @return an array containing the combinations, or null if updating is needed or if there are no files
-     */
-    public FileCombination[] createPossibleCombinations() {
-        // TODO: optimize with countChecksums in mind, i.e. read as much as possible from the same file
-
-        Log.print("createPossibleCombinations: Start");
-        if (this.needsUpdating) {
-            Log.print("createPossibleCombinations: Aborted, needsUpdating == true");
-            return null;
-        }
-
-        int possibleCombinations = this.getPossibleCombinations();
-        if (possibleCombinations < 1) {
-            Log.print("createPossibleCombinations: Aborted, no possibilities");
-            return new FileCombination[0];
-        }
-
-        FileCombination[] fc = new FileCombination[possibleCombinations];
-        for (int i = 0; i < fc.length; i++) {
-            fc[i] = new FileCombination();
-        }
-        Vector<Integer> possibleFiles = new Vector<Integer>();
-        int goodFile;
-        int combinationsDone = 1;
-        long start = 0;
-
-        for (int item = 0; item < this.items.length; item++) {
-            possibleFiles.removeAllElements();
-            goodFile = -1;
-
-            for (int i = 0; i < this.files.length; i++) {
-                if (this.items[item][i].getMark() == MARK_IS_GOOD) {
-                    goodFile = i;
-                } else if (this.items[item][i].getMark() == MARK_IS_UNSURE
-                        || this.items[item][i].getMark() == MARK_IS_UNDEFINED) {
-                    possibleFiles.add(i);
-                }
-            }
-
-            // a good file is always the best possibility
-            if (goodFile != -1) {
-                possibleFiles.removeAllElements();
-                possibleFiles.add(goodFile);
-            }
-
-            // count all possibilities and add items to FileCombinations
-            int successives = (fc.length / combinationsDone) / possibleFiles.size();
-            combinationsDone = combinationsDone * possibleFiles.size();
-            RepeatCounter counter = new RepeatCounter(possibleFiles, successives);
-
-            for (FileCombination aFc : fc) {
-                int inTurn = counter.getNext();
-                File file = this.items[item][inTurn].getFile().getSourceFile();
-
-                long end;
-                if (item == (this.items.length - 1)) {
-                    // last part
-                    end = this.items[item][inTurn].getFile().getSourceFileLength();
-                } else {
-                    end = this.items[item][inTurn].getEndOffset();
-                }
-
-                aFc.addItem(file, start, end);
-            }
-            start = this.items[item][0].getEndOffset() + 1;
-        }
-
-        Log.print("createPossibleCombinations: Done");
-        return fc;
-    }
-
-    /**
-     * A class used by {@link Comparison#createPossibleCombinations() createPossibleCombinations}.
-     * <code>RepeatCounter</code> rotates goes through a list of numbers and returns each of them as many times as
-     * defined in the constructor before switching to the next number.
-     *
-     * @author Esko Luontola
-     */
-    private class RepeatCounter {
-
-        /**
-         * The numbers in the rotation.
-         */
-        int[] values;
-
-        /**
-         * How many times each number is returned in a row.
-         */
-        int successives;
-
-        /**
-         * How many times the current number has been returned.
-         */
-        int successivesDone = 0;
-
-        /**
-         * The index of the current number.
-         */
-        int inTurn = 0;
-
-        /**
-         * Creates a <code>RepeatCounter</code> from an <code>int</code> array.
-         *
-         * @param values      the numbers to be rotated
-         * @param successives how many times each number is repeated
-         */
-        public RepeatCounter(int[] values, int successives) {
-            if (values == null || values.length == 0 || successives < 1) {
-                this.values = new int[1];
-                this.values[0] = 0;
-                this.successives = 1;
-            } else {
-                this.values = values;
-                this.successives = successives;
-            }
-        }
-
-        /**
-         * Creates a <code>RepeatCounter</code> from a <code>Vector</code> of <code>Integer</code>s.
-         *
-         * @param integers    a <code>Vector</code> of <code>Integer</code>s containing the numbers to be rotated
-         * @param successives how many times each number is repeated
-         */
-        public RepeatCounter(Vector<Integer> integers, int successives) {
-            if (integers == null || integers.size() == 0 || successives < 1) {
-                this.values = new int[1];
-                this.values[0] = 0;
-                this.successives = 1;
-            } else {
-                this.values = new int[integers.size()];
-                for (int i = 0; i < values.length; i++) {
-                    try {
-                        this.values[i] = integers.elementAt(i);
-                    } catch (ClassCastException e) {
-                        e.printStackTrace();
-                    }
-                }
-                this.successives = successives;
-            }
-        }
-
-        /**
-         * Returns the number in turn and switches to the next one when needed.
-         *
-         * @return the number in turn
-         */
-        public int getNext() {
-            int result = this.values[inTurn];
-            this.successivesDone++;
-            if (this.successivesDone == this.successives) {
-                this.successivesDone = 0;
-                this.inTurn++;
-                if (this.inTurn == this.values.length) {
-                    this.inTurn = 0;
-                }
-            }
-            return result;
-        }
-
-    }
-
-    /**
-     * Returns where this <code>Comparison</code> was previously saved.
-     *
-     * @return where this was saved, or null if not saved
-     * @see #saveToFile(File)
-     */
-    public File getSavedAsFile() {
-        return this.savedAsFile;
-    }
-
-    /**
-     * Saves this <code>Comparison</code> object into a file.
-     *
-     * @param file the file in which to save
-     * @return true if successful, otherwise false
-     * @see #loadFromFile(File)
-     */
-    public boolean saveToFile(File file) {
-        boolean successful = ObjectSaver.saveToFile(file, this);
-        if (successful) {
-            this.savedAsFile = file;
-        }
-        return successful;
-    }
-
-    /**
-     * Loads a previously saved <code>Comparison</code> from a file.
-     *
-     * @param file the file from which to load
-     * @return a new <code>Comparison</code> loaded from the file, or null if operation failed
-     * @see #saveToFile(File)
-     */
-    public static Comparison loadFromFile(File file) {
-        Comparison result;
-        try {
-            result = (Comparison) (ObjectSaver.loadFromFile(file));
-            result.savedAsFile = file;
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = null;
-        }
-        return result;
-    }
-
-    /**
-     * Returns a text representation of this object.
-     *
-     * @return a text representation of this object.
-     */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("\t*** Comparison ***\n");
 
         sb.append(" * Differences:\n");
         for (int i = 0; i < getDifferences(); i++) {
-            sb.append("part " + getPart(i) + ": ");
+            sb.append("part ").append(getPart(i)).append(": ");
             for (int j = 0; j < getFiles(); j++) {
-                sb.append("\t" + getChecksum(i, j) + " (" + getMark(i, j) + ")");
+                sb.append("\t").append(getChecksum(i, j)).append(" (").append(getMark(i, j)).append(")");
             }
-            sb.append("\t" + getFile(0).getStartOffset(getPart(i)) + "-" + getFile(0).getEndOffset(getPart(i)) + "\n");
+            sb.append("\t").append(getFile(0).getStartOffset(getPart(i))).append("-").append(getFile(0).getEndOffset(getPart(i))).append("\n");
         }
 
         sb.append("length:   ");
         for (int i = 0; i < getFiles(); i++) {
-            sb.append("\t" + getFile(i).getSourceFileLength() + " bytes");
+            sb.append("\t").append(getFile(i).getSourceFileLength()).append(" bytes");
         }
 
-        sb.append("\n * Similarity:");
-        for (int i = 0; i < getFiles(); i++) {
-            sb.append("\nfile " + i + ":");
-            for (int j = 0; j < getFiles(); j++) {
-                sb.append("\t" + getSimilarity(i, j));
-            }
-        }
+        sb.append("\n * Similarity:").append(similarity.toString());
 
         return sb.toString();
     }
 
     /**
-     * Finds and marks the parts in a row according to the number of occurence.
+     * Finds and marks the parts in a row according to the number of occurrence.
      *
      * @param start the index of the starting row
      * @param end   the index of the ending row

@@ -137,7 +137,7 @@ public class MainWindow extends JFrame {
 
         // save settings
         Settings.setWindowBounds(getBounds());
-        Settings.saveSettings();
+        SettingsLoader.saveSettings();
 
         System.exit(0);
     }
@@ -219,7 +219,7 @@ public class MainWindow extends JFrame {
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            Comparison comp = Comparison.loadFromFile(chooser.getSelectedFile());
+            Comparison comp = new ComparisonLoader(chooser.getSelectedFile()).getComparison();
             Settings.setCurrentDirectory(chooser.getSelectedFile());
             if (comp != null) {
                 newComparisonPanel(comp);

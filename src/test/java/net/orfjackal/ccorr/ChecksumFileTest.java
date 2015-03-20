@@ -68,6 +68,7 @@ public class ChecksumFileTest extends Assert {
         ChecksumFile cf = util.createChecksumFile(PART_LENGTH * parts);
 
         assertTrue(cf.getParts() >= parts);
+//        cf.getChecksum(tooHighIndex);
         assertEquals(null, cf.getChecksum(tooHighIndex));
         assertEquals(-1, cf.getStartOffset(tooHighIndex));
         assertEquals(-1, cf.getEndOffset(tooHighIndex));
@@ -77,7 +78,7 @@ public class ChecksumFileTest extends Assert {
     public void calculating_the_checksums_can_be_monitored_by_a_progress_bar() throws IOException {
         ProgressMonitor monitor = spy(new ProgressMonitor(null, null, null, 0, 0));
 
-        Settings.setProgressMonitor(monitor);
+        ProgressMonitorRepository.set(monitor);
         util.createChecksumFile(PART_LENGTH * 4);
 
         verify(monitor).setMinimum(0);

@@ -16,10 +16,7 @@ public class ComparisonItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The <code>ChecksumFile</code> that this <code>ComparisonItem</code> is related to.
-     */
-    private ChecksumFile file;
+    private String checksum;
 
     /**
      * The index of the part that this <code>ComparisonItem</code> is related to.
@@ -36,38 +33,27 @@ public class ComparisonItem implements Serializable {
      */
     private String caption;
 
-    /**
-     * Creates a <code>ComparisonItem</code> that represents the given part in the give <code>ChecksumFile</code>.
-     *
-     * @param part the index of the part
-     * @param file the <code>ChecksumFile</code>
-     */
-    public ComparisonItem(int part, ChecksumFile file) {
-        /*
-         * I placed the parameters to this oder (part, file) because everywhere
-         * else rows are before colums, and I wanted to avoid confusing myself.
-         * It might be have been more logical if this consructor's parameters
-         * had been in the other order. Whatever. ;)
-         */
-        this.file = file;
+    public ComparisonItem(String checksum, int part) {
+        this.checksum = checksum;
         this.part = part;
         this.mark = Comparison.MARK_IS_UNDEFINED;
         this.caption = null;
-        if (this.getChecksum().length() == 0) {     // if the file isn't this long
+        if (checksum == null || checksum.length() == 0) {
             this.mark = Comparison.MARK_IS_BAD;
+            this.checksum = "";
         }
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         // TODO: write as the first object an Integer which tells the version of the file, so that importing old versions would be possible
-        out.writeObject(file);
+        out.writeObject(checksum);
         out.writeInt(part);
         out.writeInt(mark);
         out.writeObject(caption);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        file = (ChecksumFile) in.readObject();
+        checksum = (String) in.readObject();
         part = in.readInt();
         mark = in.readInt();
         caption = (String) in.readObject();
@@ -127,13 +113,6 @@ public class ComparisonItem implements Serializable {
     }
 
     /**
-     * Returns the <code>ChecksumFile</code> related to this <code>ComparisonItem</code>.
-     */
-    public ChecksumFile getFile() {
-        return this.file;
-    }
-
-    /**
      * Returns the related part.
      *
      * @return index of the part
@@ -148,9 +127,9 @@ public class ComparisonItem implements Serializable {
      * @return index of the part's first byte, or -1 if the part does not exist
      * @see ChecksumFile#getStartOffset(int)
      */
-    public long getStartOffset() {
+    /*public long getStartOffset() {
         return this.file.getStartOffset(this.part);
-    }
+    }*/
 
     /**
      * Returns the offset of the related part's last byte.
@@ -158,30 +137,12 @@ public class ComparisonItem implements Serializable {
      * @return index of the part's last byte, or -1 if the part does not exist
      * @see ChecksumFile#getEndOffset(int)
      */
-    public long getEndOffset() {
+    /*public long getEndOffset() {
         return this.file.getEndOffset(this.part);
-    }
+    }*/
 
-    /**
-     * Returns the checksum of the related part.
-     *
-     * @return the checksum, or "" if the part does not exist
-     */
     public String getChecksum() {
-        String crc = this.file.getChecksum(this.part);
-        if (crc == null) {
-            crc = "";
-        }
-        return crc;
-    }
-
-    /**
-     * Sets the caption.
-     *
-     * @param caption the caption, or null to clear it
-     */
-    public void setCaption(String caption) {
-        this.caption = caption;
+        return checksum;
     }
 
     /**

@@ -4,7 +4,6 @@
 
 package net.orfjackal.ccorr;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
@@ -24,27 +23,12 @@ public class Settings implements Serializable {
     public static final String COPYRIGHT = "Copyright (C) 2003-2006  Esko Luontola, www.orfjackal.net";
     public static final String WEBSITE = "http://ccorr.sourceforge.net";
 
-    /**
-     * The minimum buffer length to be used for reading and writing files.
-     */
-    public static final int MIN_BUFFER_LENGTH = 10 * 1024;          // 10 KB
+    static Settings settings;
 
-    /**
-     * The maximum buffer length to be used for reading and writing files.
-     */
-    public static final int MAX_BUFFER_LENGTH = 10 * 1024 * 1024;    // 10 MB
+    static {
+        Settings.settings = SettingsLoader.loadSettings();
+    }
 
-    /**
-     * An instance of this class. The settings that need to be saved between program sessions are stored in an object so
-     * that they could be easilly saved and loaded by using {@link ObjectSaver ObjectSaver}.
-     */
-    private static Settings settings = new Settings();
-
-    /**
-     * Location of the settings file. It is in the user's home directory with the name <code>.ccorr.cfg</code>.
-     */
-    private static File settingsFile = new File(System.getProperty("user.home")
-            + System.getProperty("file.separator") + ".ccorr.cfg");
 
     /**
      * Default checksums algorithm's name.
@@ -62,7 +46,7 @@ public class Settings implements Serializable {
     private int readBufferLength = 1024 * 1024;      // 1 MB
 
     /**
-     * Buffer length for <code>OutpuStream</code>s
+     * Buffer length for <code>OutputStream</code>s
      */
     private int writeBufferLength = 1024 * 1024;     // 1 MB
 
@@ -81,51 +65,14 @@ public class Settings implements Serializable {
      */
     private Rectangle windowBounds = new Rectangle(300, 300, 500, 420);
 
-    /**
-     * The <code>ProgressMonitor</code> for the next long task.
-     */
-    private static ProgressMonitor progressMonitor = null;
-
-    static {
-        Settings.loadSettings();
-    }
-
     private Settings() {
-    }
-
-    /**
-     * Saves the settings to a file.
-     *
-     * @see #settingsFile
-     */
-    public static void saveSettings() {
-        if (ObjectSaver.saveToFile(settingsFile, settings)) {
-            Log.print("Settings: Saved");
-        } else {
-            Log.print("Settings: Saving Failed");
-        }
-    }
-
-    /**
-     * Loads the settings from a file.
-     *
-     * @see #settingsFile
-     */
-    public static void loadSettings() {
-        Object obj = ObjectSaver.loadFromFile(settingsFile);
-        if (obj instanceof Settings) {
-            settings = (Settings) (obj);
-            Log.print("Settings: Loaded");
-        } else {
-            Log.print("Settings: Loading Failed"); // no problem, will be using defaults
-        }
     }
 
     /**
      * Sets the default algorithm for the checksums.
      *
      * @param algorithm name of the algorithm
-     * @see CRCAlgorithmRepository#getSupportedAlgorithms()
+     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
      */
     public static void setDefaultAlgorithm(String algorithm) {
         if (algorithm != null) {
@@ -150,7 +97,8 @@ public class Settings implements Serializable {
     public static void setDefaultPartLength(long length) {
         if (length < FileDivider.MIN_PART_SIZE) {
             length = FileDivider.MIN_PART_SIZE;
-        } else if (length > FileDivider.MAX_PART_SIZE) {
+        }
+        else if (length > FileDivider.MAX_PART_SIZE) {
             length = FileDivider.MAX_PART_SIZE;
         }
         settings.defaultPartLength = length;
@@ -164,36 +112,10 @@ public class Settings implements Serializable {
     }
 
     /**
-     * Sets the buffer length for <code>InputStreams</code>. If the value is less than <code>MIN_BUFFER_LENGTH</code> or
-     * greater than <code>MAX_BUFFER_LENGTH</code>, the nearest allowed value will be used.
-     */
-    public static void setReadBufferLength(int length) {
-        if (length < MIN_BUFFER_LENGTH) {
-            length = MIN_BUFFER_LENGTH;
-        } else if (length > MAX_BUFFER_LENGTH) {
-            length = MAX_BUFFER_LENGTH;
-        }
-        settings.readBufferLength = length;
-    }
-
-    /**
      * Returns the buffer length for <code>InputStreams</code>.
      */
     public static int getReadBufferLength() {
         return settings.readBufferLength;
-    }
-
-    /**
-     * Sets the buffer length for <code>OutputStreams</code>. If the value is less than <code>MIN_BUFFER_LENGTH</code>
-     * or greater than <code>MAX_BUFFER_LENGTH</code>, the nearest allowed value will be used.
-     */
-    public static void setWriteBufferLength(int length) {
-        if (length < MIN_BUFFER_LENGTH) {
-            length = MIN_BUFFER_LENGTH;
-        } else if (length > MAX_BUFFER_LENGTH) {
-            length = MAX_BUFFER_LENGTH;
-        }
-        settings.writeBufferLength = length;
     }
 
     /**
@@ -255,26 +177,4 @@ public class Settings implements Serializable {
         return settings.windowBounds;
     }
 
-    /**
-     * Sets the <code>ProgressMonitor</code> to be used by the next long task.
-     *
-     * @param monitor an unused <code>ProgressMonitor</code> for the next one who calls <code>getProgressMonitor</code>,
-     *                or null to remove it
-     */
-    public static void setProgressMonitor(ProgressMonitor monitor) {
-        Settings.progressMonitor = monitor;
-    }
-
-    /**
-     * Returns the <code>ProgressMonitor</code> that was set with <code>setProgressMonitor</code> after which a new one
-     * must be set.
-     *
-     * @return the <code>ProgressMonitor</code> that was set, or null if one has not been set since
-     *         <code>getProgressMonitor</code> was called the last time
-     */
-    public static ProgressMonitor getProgressMonitor() {
-        ProgressMonitor result = Settings.progressMonitor;
-        Settings.progressMonitor = null;
-        return result;
-    }
 }

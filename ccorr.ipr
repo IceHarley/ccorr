@@ -294,6 +294,13 @@
         <w>checksums</w>
       </words>
     </dictionary>
+    <dictionary name="olev">
+      <words>
+        <w>esko</w>
+        <w>luontola</w>
+        <w>orfjackal</w>
+      </words>
+    </dictionary>
   </component>
   <component name="ProjectModuleManager">
     <modules>

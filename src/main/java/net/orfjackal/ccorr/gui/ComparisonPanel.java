@@ -247,7 +247,7 @@ public class ComparisonPanel extends TabPanel {
             } while (!ok);
 
             // start writing
-            Settings.setProgressMonitor(new ProgressMonitor(this,
+            ProgressMonitorRepository.set(new ProgressMonitor(this,
                     "Writing output", "", 0, 0));
 
             boolean successful = fc.writeFile(chooser.getSelectedFile());
@@ -333,7 +333,7 @@ public class ComparisonPanel extends TabPanel {
         }
 
         // do the checksums
-        Settings.setProgressMonitor(new ProgressMonitor(this,
+        ProgressMonitorRepository.set(new ProgressMonitor(this,
                 "Creating checksums", "", 0, 0));
 
         ChecksumFile cf = ChecksumFileFactory.createChecksumFile(inputFile, partLength, algorithm);
@@ -399,7 +399,7 @@ public class ComparisonPanel extends TabPanel {
                 // the checksums have been successfully updated. It would also be best to ask the user if
                 // he wants to update the checksums at all. For now no updating is done at relocation.
 
-//                Settings.setProgressMonitor(new ProgressMonitor(this,
+//                Settings.set(new ProgressMonitor(this,
 //                        "Updating checksums", "", 0, 0));
 //                checksumFile.updateChecksums();
                 getTableModel().fireFileRelocated();

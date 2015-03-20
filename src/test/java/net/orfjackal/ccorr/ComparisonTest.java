@@ -64,14 +64,6 @@ public class ComparisonTest extends Assert {
     }
 
     @Test
-    public void its_comments_can_be_changed() {
-        Comparison c = new Comparison();
-        assertEquals("", c.getComments());
-        c.setComments("foo");
-        assertEquals("foo", c.getComments());
-    }
-
-    @Test
     public void files_can_be_added_and_removed_to_and_from_the_comparison() throws IOException {
         Comparison c = new Comparison();
         ChecksumFile cf1 = util.createChecksumFile(PART_LENGTH * 2);
@@ -131,7 +123,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(0, c.getDifferences());
-        assertEquals(1.0, c.getSimilarity(0, 1), 0.0001);
+        assertEquals(1.0, c.similarity.getSimilarity(0, 1), 0.0001);
     }
 
     @Test
@@ -142,7 +134,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(2, c.getDifferences());
-        assertEquals(0.6, c.getSimilarity(0, 1), 0.0001);
+        assertEquals(0.6, c.similarity.getSimilarity(0, 1), 0.0001);
 
         String notCorrupt = "B70B4C26";
 
@@ -198,7 +190,7 @@ public class ComparisonTest extends Assert {
         c.doCompare();
 
         assertEquals(0, c.getDifferences());
-        assertEquals(1.0, c.getSimilarity(0, 1), 0.0001);
+        assertEquals(1.0, c.similarity.getSimilarity(0, 1), 0.0001);
     }
 
     @Test
@@ -230,11 +222,13 @@ public class ComparisonTest extends Assert {
         original.setMark(0, 0, Comparison.MARK_IS_BAD);
 
         File tmp = util.uniqueFile();
-        original.saveToFile(tmp);
-        Comparison loaded = Comparison.loadFromFile(tmp);
+        ComparisonLoader originalLoader = new ComparisonLoader(original);
+        originalLoader.saveToFile(tmp);
+        ComparisonLoader loadedLoader = new ComparisonLoader(tmp);
+        Comparison loaded = loadedLoader.getComparison();
 
-        assertEquals(tmp, original.getSavedAsFile());
-        assertEquals(tmp, loaded.getSavedAsFile());
+        assertEquals(tmp, originalLoader.getSavedAsFile());
+        assertEquals(tmp, loadedLoader.getSavedAsFile());
 
         assertEquals(original.getName(), loaded.getName());
         assertEquals(original.getFiles(), loaded.getFiles());

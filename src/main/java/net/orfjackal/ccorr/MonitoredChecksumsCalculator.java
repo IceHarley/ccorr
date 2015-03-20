@@ -13,7 +13,7 @@ public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
 
     public MonitoredChecksumsCalculator(FileDivider fileDivider, CRC crc) {
         super(fileDivider, crc);
-        this.monitor = Settings.getProgressMonitor();
+        this.monitor = ProgressMonitorRepository.get();
     }
 
     @Override
