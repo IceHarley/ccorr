@@ -20,13 +20,10 @@ public class ComparisonItem implements Serializable {
     private int part;
     private Mark mark;
 
-    private String caption;
-
     public ComparisonItem(String checksum, int part) {
         this.checksum = checksum;
         this.part = part;
         this.mark = Mark.UNDEFINED;
-        this.caption = null;
         if (checksum == null || checksum.length() == 0) {
             this.mark = Mark.BAD;
             this.checksum = "";
@@ -38,14 +35,12 @@ public class ComparisonItem implements Serializable {
         out.writeObject(checksum);
         out.writeInt(part);
         out.writeObject(mark);
-        out.writeObject(caption);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         checksum = (String) in.readObject();
         part = in.readInt();
         mark = (Mark) in.readObject();
-        caption = (String) in.readObject();
     }
 
     public void setMark(Mark mark) {
@@ -70,13 +65,4 @@ public class ComparisonItem implements Serializable {
         return checksum;
     }
 
-    public String getCaption() {
-        String result;
-        if (this.caption == null) {
-            result = this.getChecksum();
-        } else {
-            result = this.caption;
-        }
-        return result;
-    }
 }

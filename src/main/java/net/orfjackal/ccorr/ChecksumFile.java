@@ -25,8 +25,8 @@ public class ChecksumFile implements Serializable {
         this.sourceFileLength = sourceFileLength;
     }
 
-    static boolean partPresentInFile(ChecksumFile file, int part) {
-        return file.getChecksum(part) != null;
+    boolean partPresentInFile(int part) {
+        return this.getChecksum(part) != null;
     }
 
     public int getParts() {
@@ -34,9 +34,6 @@ public class ChecksumFile implements Serializable {
     }
 
     public String getChecksum(int part) {
-//        if (!checksums.isValidIndex(part)) {
-//            throw new IndexOutOfBoundsException();
-//        }
         return checksums.get(part);
     }
 

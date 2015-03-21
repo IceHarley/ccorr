@@ -163,7 +163,7 @@ public class ComparisonTest extends Assert {
         for (int difference = 0; difference <= 1; difference++) {
             for (int file = 0; file <= 1; file++) {
                 ComparisonItem ci = c.getItem(difference, file);
-                assertEquals(c.getChecksum(difference, file), ci.getCaption());
+                assertEquals(c.getChecksum(difference, file), ci.getChecksum());
                 assertEquals(c.getMark(difference, file), ci.getMark());
             }
         }

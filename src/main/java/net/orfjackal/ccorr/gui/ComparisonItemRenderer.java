@@ -39,7 +39,6 @@ class ComparisonItemRenderer extends JLabel implements TableCellRenderer {
 
         if (value instanceof ComparisonItem) {
             ComparisonItem item = (ComparisonItem) (value);
-            setText(item.getCaption());
             setFont(new Font("Courier New", Font.PLAIN, 12));
 
             Color color;

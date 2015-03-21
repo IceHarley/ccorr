@@ -8,55 +8,34 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ComparisonItems implements Serializable {
-    private ComparisonItem[][] items;
-    private int partsCount;
-    private int filesCount;
+    List<ComparisonItem> items = new ArrayList<ComparisonItem>();
 
-    public ComparisonItems(int partsCount, int filesCount) {
-        items = new ComparisonItem[partsCount][filesCount];
-        this.partsCount = partsCount;
-        this.filesCount = filesCount;
+    public void add(ComparisonItem item) {
+        items.add(item);
     }
 
-    public ComparisonItem get(int part, int file) {
-        return items[part][file];
+    public ComparisonItem find(ComparisonItem sourceItem) {
+        return find(sourceItem.getPart(), sourceItem.getChecksum());
+    }
+
+    public ComparisonItem find(int part, String checksum) {
+        for (ComparisonItem item : items) {
+            if (item.getPart() == part && item.getChecksum().equals(checksum))
+                return item;
+        }
+        return null;
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(items);
+        out.writeObject(items.toArray(new ComparisonItem[items.size()]));
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        items = (ComparisonItem[][]) in.readObject();
-        partsCount = items.length;
-        filesCount = 0;
-        if (partsCount > 0)
-            filesCount = items[0].length;
-    }
-
-    public int partsCount() {
-        return partsCount;
-    }
-
-    public int filesCount() {
-        return filesCount;
-    }
-
-    public void set(int index1, int index2, ComparisonItem value) {
-        items[index1][index2] = value;
-    }
-
-    public Mark findMark(Integer part, String checksum) {
-        Mark result = Mark.UNDEFINED;
-        for (int p = 0; p < partsCount; p++) {
-            for (int f = 0; f < filesCount; f++) {
-                if (items[p][f].getPart() == part && items[p][f].getChecksum() == checksum)
-                    if (items[p][f].getMark() != Mark.UNDEFINED)
-                        result = items[p][f].getMark();
-            }
-        }
-        return result;
+        items = new ArrayList<ComparisonItem>(Arrays.asList((ComparisonItem[]) in.readObject()));
     }
 }

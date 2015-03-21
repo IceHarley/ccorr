@@ -62,7 +62,9 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return files.remove(file);
     }
 
-    public boolean arePartsEquals(int i, int j, int part) {
-        return files.get(i).getChecksum(part).equals(files.get(j).getChecksum(part));
+    public boolean arePartsEquals(int file1, int file2, int part) {
+        String checksum1 = files.get(file1).getChecksum(part);
+        String checksum2 = files.get(file2).getChecksum(part);
+        return checksum1.equals(checksum2);
     }
 }
