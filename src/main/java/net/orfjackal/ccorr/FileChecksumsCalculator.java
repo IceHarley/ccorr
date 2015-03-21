@@ -29,7 +29,7 @@ public class FileChecksumsCalculator {
         }
         catch (IOException e) {
             e.printStackTrace();
-            return ChecksumFile.EMPTY_DATA;
+            return ChecksumFileFactory.EMPTY_DATA;
         }
     }
 

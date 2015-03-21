@@ -44,7 +44,7 @@ public class ComparisonItem implements Serializable {
     }
 
     public void setMark(Mark mark) {
-        if (this.getChecksum().length() != 0) {     // if the file is long enough
+        if (this.getChecksum().length() != 0) {
             if (mark == Mark.NEXT) {
                 this.setMark(Mark.nextMark(this.getMark()));
             } else {

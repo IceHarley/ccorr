@@ -7,10 +7,6 @@ package net.orfjackal.ccorr;
 import java.io.*;
 
 public class ChecksumFileLoader implements Serializable {
-
-    /**
-     * The file to which this <code>ChecksumFile</code> was saved.
-     */
     private File savedAsFile;
     ChecksumFile checksumFile;
 
@@ -18,13 +14,6 @@ public class ChecksumFileLoader implements Serializable {
         this.checksumFile = checksumFile;
     }
 
-    /**
-     * Saves this <code>ChecksumFile</code> object into a file.
-     *
-     * @param file the file in which to save
-     * @return true if successful, otherwise false
-     * @see #loadFromFile(java.io.File)
-     */
     public boolean saveToFile(File file) {
         boolean successful = ObjectSaver.saveToFile(file, checksumFile);
         if (successful) {
@@ -33,13 +22,6 @@ public class ChecksumFileLoader implements Serializable {
         return successful;
     }
 
-    /**
-     * Loads a previously saved <code>ChecksumFile</code> from a file.
-     *
-     * @param file the file from which to load
-     * @return a new <code>ChecksumFile</code> loaded from the file, or null if operation failed
-     * @see #saveToFile(File)
-     */
     public static ChecksumFile loadFromFile(File file) {
         ChecksumFile result;
         try {

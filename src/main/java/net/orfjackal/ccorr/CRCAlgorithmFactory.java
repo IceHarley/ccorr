@@ -46,11 +46,6 @@ public class CRCAlgorithmFactory {
         }
     }
 
-    /**
-     * Returns an array containing the names of the algorithms known by this class.
-     *
-     * @return the algorithm names in an array
-     */
     public static String[] getSupportedAlgorithms() {
         String[] result = new String[]{Names.CRC_32.value(), Names.MD5.value(), Names.SHA_1.value()};
         Arrays.sort(result);

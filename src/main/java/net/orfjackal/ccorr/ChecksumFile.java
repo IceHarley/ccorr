@@ -8,7 +8,6 @@ import java.io.*;
 
 public class ChecksumFile implements Serializable {
 
-    public static final ChecksumFile EMPTY_DATA = new ChecksumFile(null, "", -1, null, -1);
     private static final long serialVersionUID = 1L;
 
     private Checksums checksums;
@@ -38,11 +37,7 @@ public class ChecksumFile implements Serializable {
     }
 
     public long getStartOffset(int part) {
-        if (!checksums.isValidIndex(part)) {
-            return -1;
-        } else {
-            return this.partLength * part;
-        }
+        return !checksums.isValidIndex(part) ? -1 : this.partLength * part;
     }
 
     public long getEndOffset(int part) {
@@ -82,17 +77,20 @@ public class ChecksumFile implements Serializable {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < this.getParts(); i++)
-            sb.append(i + ": " + this.getChecksum(i)
-                    + "\t start: " + this.getStartOffset(i)
-                    + "\t end: " + this.getEndOffset(i) + "\n");
-        sb.append("\n" + this.getSourceFile() + " ("
-                + this.getSourceFileLength() + " bytes) \n"
-                + this.getParts() + " parts ("
-                + this.getPartLength() + " bytes) "
-                + "using " + this.getAlgorithm());
+            sb.append(i).append(": ").
+                append(this.getChecksum(i)).
+                append("\t start: ").append(this.getStartOffset(i)).
+                append("\t end: ").append(this.getEndOffset(i)).
+                append("\n");
+        sb.append("\n").
+                append(this.getSourceFile()).
+                append(" (").append(this.getSourceFileLength()).append(" bytes) \n").
+                append(this.getParts()).
+                append(" parts (").append(this.getPartLength()).append(" bytes) ").
+                append("using ").append(this.getAlgorithm());
 
         return sb.toString();
     }
