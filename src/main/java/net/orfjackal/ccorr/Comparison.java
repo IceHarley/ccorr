@@ -165,7 +165,7 @@ public class Comparison implements Serializable {
      *
      * @return the number of files
      */
-    public int getFiles() {
+    public int getFilesCount() {
         return this.files.size();
     }
 
@@ -190,7 +190,7 @@ public class Comparison implements Serializable {
      * @param difference the index of the difference
      * @param file       the index of the file
      */
-    private boolean isGoodIndex(int difference, int file) {
+    boolean isGoodIndex(int difference, int file) {
         return !(this.needsUpdating
                 || difference < 0
                 || difference >= partsThatDiffer.size()
@@ -239,7 +239,7 @@ public class Comparison implements Serializable {
     public long getStartOffset(int difference) {
         if (this.isGoodIndex(difference, 0)) {
             long offset = -1;
-            for (int i = 0; i < this.getFiles(); i++) {
+            for (int i = 0; i < this.getFilesCount(); i++) {
                 ComparisonItem item = getItem(difference, i);
                 if (item != null && files.get(i).getStartOffset(item.getPart()) > offset) {
                     offset = files.get(i).getStartOffset(item.getPart());
@@ -260,7 +260,7 @@ public class Comparison implements Serializable {
     public long getEndOffset(int difference) {
         if (this.isGoodIndex(difference, 0)) {
             long offset = -1;
-            for (int i = 0; i < this.getFiles(); i++) {
+            for (int i = 0; i < this.getFilesCount(); i++) {
                 ComparisonItem item = getItem(difference, i);
                 if (item != null && files.get(i).getEndOffset(item.getPart()) > offset) {
                     offset = files.get(i).getEndOffset(item.getPart());
@@ -497,118 +497,20 @@ public class Comparison implements Serializable {
         sb.append(" * Differences:\n");
         for (int i = 0; i < getDifferences(); i++) {
             sb.append("part ").append(getPart(i)).append(": ");
-            for (int j = 0; j < getFiles(); j++) {
+            for (int j = 0; j < getFilesCount(); j++) {
                 sb.append("\t").append(getChecksum(i, j)).append(" (").append(getMark(i, j)).append(")");
             }
             sb.append("\t").append(getFile(0).getStartOffset(getPart(i))).append("-").append(getFile(0).getEndOffset(getPart(i))).append("\n");
         }
 
         sb.append("length:   ");
-        for (int i = 0; i < getFiles(); i++) {
+        for (int i = 0; i < getFilesCount(); i++) {
             sb.append("\t").append(getFile(i).getSourceFileLength()).append(" bytes");
         }
 
         sb.append("\n * Similarity:").append(similarity.toString());
 
         return sb.toString();
-    }
-
-    /**
-     * Finds and marks the parts in a row according to the number of occurrence.
-     *
-     * @param start the index of the starting row
-     * @param end   the index of the ending row
-     * @return true if successful, false if invalid range was given
-     */
-    public boolean markGoodParts(int start, int end) {
-        /*
-         * good, unsure and undefined count the number of parts (increased once per row)
-         */
-        int good = 0;
-        int unsure = 0;
-        int undefined = 0;
-
-        /*
-        * Check for valid range. Abort if invalid range is given.
-        */
-        if (start < 0 || end >= getDifferences() || start > end) {
-            Log.print("Comparison.markGoodParts: Invalid range, aborting.");
-            return false;
-        }
-
-        /*
-        * ht           a hashtable to store the number of occurrences for each checksum
-        * max          the maximum number of occurrences
-        * maxIndex     the index of the checksum with the maximum occurrence
-        * isUnsure     decides whether GOOD or UNSURE should be set
-        */
-        for (int difference = start; difference <= end; difference++) {
-            Hashtable<String, Integer> ht = new Hashtable<String, Integer>();
-            int max = 1;
-            int maxIndex = -1;
-            boolean isUnsure = false;
-
-            /*
-             * Increase the counter for existing checksums or
-             * create a new entry in the hashtable.
-             */
-            for (int file = 0; file < files.size(); file++) {
-                if (this.isGoodIndex(difference, file)) {
-                    // Skip column if past the end of file
-                    if (getChecksum(difference, file).length() == 0) {
-                        continue;
-                    }
-
-                    // Do not change rows that already have markers set
-                    if (getMark(difference, file) != Mark.UNDEFINED) {
-                        maxIndex = -1;
-                        break;
-                    }
-
-                    String crc = getChecksum(difference, file);
-
-                    if (ht.containsKey(crc)) {
-                        Integer counter = ht.get(crc);
-                        ht.remove(crc);
-                        ht.put(crc, counter + 1);
-
-                        /*
-                        * Remember index of checksum with maximum count
-                        */
-                        if (counter + 1 > max) {
-                            max = counter + 1;
-                            maxIndex = file;
-                            isUnsure = false;
-                        } else {
-                            if (counter + 1 == max) {
-                                isUnsure = true;
-                            }
-                        }
-                    } else {
-                        ht.put(crc, 1);
-                    }
-                }
-            }
-
-            /*
-            * Now mark all checksums with the maximum count in the difference.
-            */
-            if (maxIndex >= 0) {
-                if (isUnsure) {
-                    setMark(difference, maxIndex, Mark.UNSURE);
-                    unsure++;
-                } else {
-                    setMark(difference, maxIndex, Mark.GOOD);
-                    good++;
-                }
-            } else {
-                undefined++;
-            }
-        }
-
-        Log.print("Comparison.markGoodParts: " + good + " good, "
-                + unsure + " unsure and " + undefined + " row(s) unchanged.");
-        return true;
     }
 
     /**

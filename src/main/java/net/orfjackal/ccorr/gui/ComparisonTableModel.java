@@ -54,7 +54,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Returns the number of columns in the model.
      */
     public int getColumnCount() {
-        return this.comparison.getFiles() + 1;
+        return this.comparison.getFilesCount() + 1;
     }
 
     /**
@@ -157,7 +157,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Represents the corresponding method in the comparison.
      */
     public int getFiles() {
-        return this.comparison.getFiles();
+        return this.comparison.getFilesCount();
     }
 
     /**
@@ -314,7 +314,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Represents the corresponding method in the comparison.
      */
     public boolean markGoodParts(int start, int end) {
-        boolean successful = this.comparison.markGoodParts(start, end);
+        boolean successful = new GoodPartsMarker(comparison).markGoodParts(start, end);
         if (successful) {
             isModified = true;
             fireTableRowsUpdated(start, end);

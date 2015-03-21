@@ -32,7 +32,7 @@ public class ComparisonTest extends Assert {
         Comparison c = new Comparison();
         c.doCompare();
 
-        assertEquals(0, c.getFiles());
+        assertEquals(0, c.getFilesCount());
         assertEquals(0, c.getDifferences());
     }
 
@@ -71,16 +71,16 @@ public class ComparisonTest extends Assert {
 
         c.addFile(cf1);
         c.addFile(cf2);
-        assertEquals(2, c.getFiles());
+        assertEquals(2, c.getFilesCount());
         assertEquals(cf1, c.getFile(0));
         assertEquals(cf2, c.getFile(1));
 
         c.removeFile(0);
-        assertEquals(1, c.getFiles());
+        assertEquals(1, c.getFilesCount());
         assertEquals(cf2, c.getFile(0));
 
         c.removeFile(0);
-        assertEquals(0, c.getFiles());
+        assertEquals(0, c.getFilesCount());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ComparisonTest extends Assert {
         c.addFile(cf1);
         c.addFile(cf2);
 
-        assertEquals(1, c.getFiles());
+        assertEquals(1, c.getFilesCount());
         assertEquals(cf1, c.getFile(0));
     }
 
@@ -111,7 +111,7 @@ public class ComparisonTest extends Assert {
         c.addFile(cf1);
         c.addFile(cf2);
 
-        assertEquals(1, c.getFiles());
+        assertEquals(1, c.getFilesCount());
         assertEquals(cf1, c.getFile(0));
     }
 
@@ -231,7 +231,7 @@ public class ComparisonTest extends Assert {
         assertEquals(tmp, loadedLoader.getSavedAsFile());
 
         assertEquals(original.getName(), loaded.getName());
-        assertEquals(original.getFiles(), loaded.getFiles());
+        assertEquals(original.getFilesCount(), loaded.getFilesCount());
         assertEquals(original.getDifferences(), loaded.getDifferences());
         assertEquals(original.getChecksum(0, 0), original.getChecksum(0, 0));
         assertEquals(original.getChecksum(0, 1), original.getChecksum(0, 1));

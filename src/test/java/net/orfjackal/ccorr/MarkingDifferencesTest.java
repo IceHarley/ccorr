@@ -111,7 +111,7 @@ public class MarkingDifferencesTest extends Assert {
         c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_1));
         c.doCompare();
 
-        c.markGoodParts(0, c.getDifferences() - 1);
+        new GoodPartsMarker(c).markGoodParts(0, c.getDifferences() - 1);
 
         assertEquals(Mark.UNDEFINED, c.getMark(DIFF_0, 0));
         assertEquals(Mark.GOOD, c.getMark(DIFF_0, 1));
@@ -131,7 +131,7 @@ public class MarkingDifferencesTest extends Assert {
         c.addFile(util.createChecksumFile(PART_LENGTH * 2));
         c.doCompare();
 
-        c.markGoodParts(0, c.getDifferences() - 1);
+        new GoodPartsMarker(c).markGoodParts(0, c.getDifferences() - 1);
 
         assertEquals(Mark.UNSURE, c.getMark(DIFF_0, 0));
         assertEquals(Mark.UNSURE, c.getMark(DIFF_0, 1));
@@ -150,7 +150,7 @@ public class MarkingDifferencesTest extends Assert {
         c.setMark(DIFF_0, 0, Mark.GOOD);
         c.setMark(DIFF_0, 1, Mark.BAD);
 
-        c.markGoodParts(0, c.getDifferences() - 1);
+        new GoodPartsMarker(c).markGoodParts(0, c.getDifferences() - 1);
 
         assertEquals(Mark.GOOD, c.getMark(DIFF_0, 0));
         assertEquals(Mark.BAD, c.getMark(DIFF_0, 1));
