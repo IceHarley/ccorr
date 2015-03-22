@@ -4,16 +4,19 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ComparisonItems implements Serializable {
     List<ComparisonItem> items = new ArrayList<ComparisonItem>();
+
+    public ComparisonItems() {
+    }
+
+    private ComparisonItems(List<ComparisonItem> items) {
+        this.items = items;
+    }
 
     public void add(ComparisonItem item) {
         items.add(item);
@@ -31,11 +34,26 @@ public class ComparisonItems implements Serializable {
         return null;
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(items.toArray(new ComparisonItem[items.size()]));
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        items = new ArrayList<ComparisonItem>(Arrays.asList((ComparisonItem[]) in.readObject()));
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private List<ComparisonItem> items = new ArrayList<ComparisonItem>();
+
+        public SerializationProxy(ComparisonItems target) {
+            this.items = target.items;
+        }
+
+        private Object readResolve() {
+            return new ComparisonItems(items);
+        }
     }
 }

@@ -5,7 +5,6 @@
 package net.orfjackal.ccorr;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class Checksums implements Serializable {
@@ -13,14 +12,6 @@ public class Checksums implements Serializable {
 
     public Checksums(List<String> checksums) {
         this.checksums = checksums;
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(checksums.toArray(new String[checksums.size()]));
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        checksums = Arrays.asList((String[]) in.readObject());
     }
 
     public int size() {
@@ -33,5 +24,28 @@ public class Checksums implements Serializable {
 
     public String get(int index) {
         return isValidIndex(index) ? checksums.get(index) : null;
+    }
+
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private List<String> checksums;
+
+        public SerializationProxy(Checksums target) {
+            this.checksums = target.checksums;
+        }
+
+        private Object readResolve() {
+            return new Checksums(checksums);
+        }
     }
 }

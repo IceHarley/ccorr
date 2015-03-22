@@ -4,10 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 public class Similarity implements Serializable{
     private double[][] similarity;
@@ -16,12 +13,8 @@ public class Similarity implements Serializable{
         similarity = new double[size][size];
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(similarity);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        similarity = (double[][]) in.readObject();
+    private Similarity(double[][] similarity) {
+        this.similarity = similarity;
     }
 
     public void set(int index1, int index2, double value) {
@@ -42,5 +35,28 @@ public class Similarity implements Serializable{
                 sb.append("\t").append(similarity[i][j]);
         }
         return sb.toString();
+    }
+
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final double[][] similarity;
+
+        public SerializationProxy(Similarity target) {
+            this.similarity = target.similarity;
+        }
+
+        private Object readResolve() {
+            return new Similarity(similarity);
+        }
     }
 }

@@ -4,12 +4,8 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,20 +17,16 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         this.files = new ArrayList<ChecksumFile>();
     }
 
+    private ChecksumFiles(List<ChecksumFile> files) {
+        this.files = files;
+    }
+
     public int findShorterFileParts(int index1, int index2) {
         int shortest = files.get(index1).getParts();
         if (files.get(index2).getParts() < shortest) {
             shortest = files.get(index2).getParts();
         }
         return shortest;
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(files.toArray(new ChecksumFile[files.size()]));
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        files = Arrays.asList((ChecksumFile[]) in.readObject());
     }
 
     public int size() {
@@ -66,5 +58,28 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         String checksum1 = files.get(file1).getChecksum(part);
         String checksum2 = files.get(file2).getChecksum(part);
         return checksum1.equals(checksum2);
+    }
+
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final List<ChecksumFile> files;
+
+        public SerializationProxy(ChecksumFiles target) {
+            this.files = target.files;
+        }
+
+        private Object readResolve() {
+            return new ChecksumFiles(files);
+        }
     }
 }

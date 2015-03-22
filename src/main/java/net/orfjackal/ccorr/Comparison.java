@@ -18,9 +18,6 @@ import java.util.*;
  * @author Esko Luontola
  */
 public class Comparison implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
     private String name;
     private ChecksumFiles files;
     private ComparisonItems items;
@@ -35,25 +32,6 @@ public class Comparison implements Serializable {
         this.similarity = new Similarity(0);
         this.needsUpdating = false;
         this.items = new ComparisonItems();
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        // TODO: write as the first object an Integer which tells the version of the file, so that importing old versions would be possible
-        out.writeObject(name);
-        out.writeObject(files);
-        out.writeObject(items);
-        out.writeObject(similarity);
-        out.writeObject(partsThatDiffer.toArray(new Integer[partsThatDiffer.size()]));
-        out.writeBoolean(needsUpdating);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        name = (String) in.readObject();
-        files = (ChecksumFiles) in.readObject();
-        items = (ComparisonItems) in.readObject();
-        similarity = (Similarity) in.readObject();
-        partsThatDiffer = new ArrayList<Integer>(Arrays.asList((Integer[]) in.readObject()));
-        needsUpdating = in.readBoolean();
     }
 
     public void doCompare() {
@@ -84,30 +62,20 @@ public class Comparison implements Serializable {
     }
 
     private void compareEachFilesPair() {
-        for (int i = 0; i < (files.size() - 1); i++) {
-            for (int j = (i + 1); j < files.size(); j++) {
+        for (int i = 0; i < (files.size() - 1); i++)
+            for (int j = (i + 1); j < files.size(); j++)
                 compareFiles(numberOfDifferences, i, j);
-            }
-        }
     }
 
     private void compareFiles(NumberOfDifferences numberOfDifferences, int file1, int file2) {
         int shortest = files.findShorterFileParts(file1, file2);
 
-        for (int part = 0; part < shortest; part++) {
-            if (files.get(file1).partPresentInFile(part) && files.get(file2).partPresentInFile(part)) {
-
+        for (int part = 0; part < shortest; part++)
+            if (files.get(file1).partPresentInFile(part) && files.get(file2).partPresentInFile(part))
                 if (!files.arePartsEquals(file1, file2, part)) {
-                    // difference found between files file1 and file2 (file1 is always lower index than file2)
                     numberOfDifferences.add(file1, file2);
-
-                    // update our part list
-                    if (!partsThatDiffer.contains(part)) {
-                        partsThatDiffer.add(part);
-                    }
+                    if (!partsThatDiffer.contains(part)) partsThatDiffer.add(part);
                 }
-            }
-        }
     }
 
     private void storeComparisonDataToList() {
@@ -539,5 +507,48 @@ public class Comparison implements Serializable {
 
         Log.print("Comparison.markRowUndefined: UNDEFINED set.");
         return true;
+    }
+
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final String name;
+        private final ChecksumFiles files;
+        private final ComparisonItems items;
+        private final Similarity similarity;
+        private final boolean needsUpdating;
+        private List<Integer> partsThatDiffer = new ArrayList<Integer>();
+        private final NumberOfDifferences numberOfDifferences;
+
+        public SerializationProxy(Comparison target) {
+            this.name = target.name;
+            this.files = target.files;
+            this.items = target.items;
+            this.similarity = target.similarity;
+            this.needsUpdating = target.needsUpdating;
+            this.partsThatDiffer = target.partsThatDiffer;
+            this.numberOfDifferences = target.numberOfDifferences;
+        }
+
+        private Object readResolve() {
+            Comparison target = new Comparison();
+            target.name = this.name;
+            target.files = this.files;
+            target.items = this.items;
+            target.similarity = this.similarity;
+            target.needsUpdating = this.needsUpdating;
+            target.partsThatDiffer = this.partsThatDiffer;
+            target.numberOfDifferences = this.numberOfDifferences;
+            return target;
+        }
     }
 }

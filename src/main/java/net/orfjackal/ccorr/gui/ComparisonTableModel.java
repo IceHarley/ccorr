@@ -123,13 +123,6 @@ public class ComparisonTableModel extends AbstractTableModel {
     }
 
     /**
-     * Returns the class of the cell at <code>columnIndex</code> and row index 0.
-     */
-    public Class getColumnClass(int columnIndex) {
-        return this.getValueAt(0, columnIndex).getClass();
-    }
-
-    /**
      * Returns true if the cell at rowIndex and columnIndex is editable.
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {

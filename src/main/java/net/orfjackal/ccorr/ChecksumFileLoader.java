@@ -14,6 +14,11 @@ public class ChecksumFileLoader implements Serializable {
         this.checksumFile = checksumFile;
     }
 
+    private ChecksumFileLoader(ChecksumFile checksumFile, File savedAsFile) {
+        this.savedAsFile = savedAsFile;
+        this.checksumFile = checksumFile;
+    }
+
     public boolean saveToFile(File file) {
         boolean successful = ObjectSaver.saveToFile(file, checksumFile);
         if (successful) {
@@ -33,13 +38,28 @@ public class ChecksumFileLoader implements Serializable {
         return result;
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(checksumFile);
-        out.writeObject(savedAsFile);
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        checksumFile = (ChecksumFile) in.readObject();
-        savedAsFile = (File) in.readObject();
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final ChecksumFile checksumFile;
+        private final File savedAsFile;
+
+        public SerializationProxy(ChecksumFileLoader target) {
+            this.checksumFile = target.checksumFile;
+            this.savedAsFile = target.savedAsFile;
+        }
+
+        private Object readResolve() {
+            return new ChecksumFileLoader(checksumFile, savedAsFile);
+        }
     }
 }

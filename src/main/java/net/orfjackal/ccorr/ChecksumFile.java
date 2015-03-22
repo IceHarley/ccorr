@@ -8,8 +8,6 @@ import java.io.*;
 
 public class ChecksumFile implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private Checksums checksums;
     private String usedAlgorithm;
     private long partLength;
@@ -95,20 +93,34 @@ public class ChecksumFile implements Serializable {
         return sb.toString();
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        // TODO: write as the first object an Integer which tells the version of the file, so that importing old versions would be possible
-        out.writeObject(checksums);
-        out.writeObject(usedAlgorithm);
-        out.writeLong(partLength);
-        out.writeObject(sourceFile);
-        out.writeLong(sourceFileLength);
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        checksums = (Checksums) in.readObject();
-        usedAlgorithm = (String) in.readObject();
-        partLength = in.readLong();
-        sourceFile = (File) in.readObject();
-        sourceFileLength = in.readLong();
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final Checksums checksums;
+        private final String usedAlgorithm;
+        private final long partLength;
+        private final File sourceFile;
+        private final long sourceFileLength;
+
+        public SerializationProxy(ChecksumFile target) {
+            this.checksums = target.checksums;
+            this.usedAlgorithm = target.usedAlgorithm;
+            this.partLength = target.partLength;
+            this.sourceFile = target.sourceFile;
+            this.sourceFileLength = target.sourceFileLength;
+        }
+
+        private Object readResolve() {
+            return new ChecksumFile(checksums, usedAlgorithm, partLength, sourceFile, sourceFileLength);
+        }
     }
 }

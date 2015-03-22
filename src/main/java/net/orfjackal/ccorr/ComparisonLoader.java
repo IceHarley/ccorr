@@ -18,6 +18,11 @@ public class ComparisonLoader implements Serializable {
         this.comparison = loadFromFile(file);
     }
 
+    private ComparisonLoader(Comparison comparison, File savedAsFile) {
+        this.comparison = comparison;
+        this.savedAsFile = savedAsFile;
+    }
+
     public boolean saveToFile(File file) {
         boolean successful = ObjectSaver.saveToFile(file, comparison);
         if (successful) {
@@ -42,18 +47,32 @@ public class ComparisonLoader implements Serializable {
         return result;
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(comparison);
-        out.writeObject(savedAsFile);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        comparison = (Comparison) in.readObject();
-        savedAsFile = (File) in.readObject();
-    }
-
     public File getSavedAsFile() {
         return this.savedAsFile;
     }
 
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final Comparison comparison;
+        private final File savedAsFile;
+
+        public SerializationProxy(ComparisonLoader target) {
+            this.comparison = target.comparison;
+            this.savedAsFile = target.savedAsFile;
+        }
+
+        private Object readResolve() {
+            return new ComparisonLoader(comparison, savedAsFile);
+        }
+    }
 }

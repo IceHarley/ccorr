@@ -4,16 +4,17 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 public class NumberOfDifferences implements Serializable {
     int[][] numberOfDifferences;
 
     public NumberOfDifferences(int size) {
         this.numberOfDifferences = new int[size][size];
+    }
+
+    private NumberOfDifferences(int[][] numberOfDifferences) {
+        this.numberOfDifferences = numberOfDifferences;
     }
 
     public void add(int index1, int index2) {
@@ -24,11 +25,26 @@ public class NumberOfDifferences implements Serializable {
         return numberOfDifferences[index1][index2];
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(numberOfDifferences);
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        numberOfDifferences = (int[][]) in.readObject();
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final int[][] numberOfDifferences;
+
+        public SerializationProxy(NumberOfDifferences target) {
+            this.numberOfDifferences = target.numberOfDifferences;
+        }
+
+        private Object readResolve() {
+            return new NumberOfDifferences(numberOfDifferences);
+        }
     }
 }

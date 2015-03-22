@@ -13,12 +13,15 @@ import java.io.*;
  * @author Esko Luontola
  */
 public class ComparisonItem implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
     private String checksum;
     private int part;
     private Mark mark;
+
+    private ComparisonItem(String checksum, int part, Mark mark) {
+        this.checksum = checksum;
+        this.part = part;
+        this.mark = mark;
+    }
 
     public ComparisonItem(String checksum, int part) {
         this.checksum = checksum;
@@ -28,19 +31,6 @@ public class ComparisonItem implements Serializable {
             this.mark = Mark.BAD;
             this.checksum = "";
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        // TODO: write as the first object an Integer which tells the version of the file, so that importing old versions would be possible
-        out.writeObject(checksum);
-        out.writeInt(part);
-        out.writeObject(mark);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        checksum = (String) in.readObject();
-        part = in.readInt();
-        mark = (Mark) in.readObject();
     }
 
     public void setMark(Mark mark) {
@@ -65,4 +55,30 @@ public class ComparisonItem implements Serializable {
         return checksum;
     }
 
+    //Serialization
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+
+    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
+        throw new InvalidObjectException("Proxy required.");
+    }
+
+    private static class SerializationProxy implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final String checksum;
+        private final int part;
+        private final Mark mark;
+
+        public SerializationProxy(ComparisonItem target) {
+            this.checksum = target.checksum;
+            this.part = target.part;
+            this.mark = target.mark;
+        }
+
+        private Object readResolve() {
+            return new ComparisonItem(checksum, part, mark);
+        }
+    }
 }
