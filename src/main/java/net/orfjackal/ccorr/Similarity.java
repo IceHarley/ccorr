@@ -13,10 +13,6 @@ public class Similarity implements Serializable{
         similarity = new double[size][size];
     }
 
-    private Similarity(double[][] similarity) {
-        this.similarity = similarity;
-    }
-
     public void set(int index1, int index2, double value) {
         similarity[index1][index2] = value;
         similarity[index2][index1] = value;
@@ -35,28 +31,5 @@ public class Similarity implements Serializable{
                 sb.append("\t").append(similarity[i][j]);
         }
         return sb.toString();
-    }
-
-    //Serialization
-    private Object writeReplace() {
-        return new SerializationProxy(this);
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Proxy required.");
-    }
-
-    private static class SerializationProxy implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final double[][] similarity;
-
-        public SerializationProxy(Similarity target) {
-            this.similarity = target.similarity;
-        }
-
-        private Object readResolve() {
-            return new Similarity(similarity);
-        }
     }
 }

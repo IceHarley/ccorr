@@ -92,35 +92,4 @@ public class ChecksumFile implements Serializable {
 
         return sb.toString();
     }
-
-    //Serialization
-    private Object writeReplace() {
-        return new SerializationProxy(this);
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Proxy required.");
-    }
-
-    private static class SerializationProxy implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final Checksums checksums;
-        private final String usedAlgorithm;
-        private final long partLength;
-        private final File sourceFile;
-        private final long sourceFileLength;
-
-        public SerializationProxy(ChecksumFile target) {
-            this.checksums = target.checksums;
-            this.usedAlgorithm = target.usedAlgorithm;
-            this.partLength = target.partLength;
-            this.sourceFile = target.sourceFile;
-            this.sourceFileLength = target.sourceFileLength;
-        }
-
-        private Object readResolve() {
-            return new ChecksumFile(checksums, usedAlgorithm, partLength, sourceFile, sourceFileLength);
-        }
-    }
 }

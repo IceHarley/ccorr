@@ -17,12 +17,6 @@ public class ComparisonItem implements Serializable {
     private int part;
     private Mark mark;
 
-    private ComparisonItem(String checksum, int part, Mark mark) {
-        this.checksum = checksum;
-        this.part = part;
-        this.mark = mark;
-    }
-
     public ComparisonItem(String checksum, int part) {
         this.checksum = checksum;
         this.part = part;
@@ -53,32 +47,5 @@ public class ComparisonItem implements Serializable {
 
     public String getChecksum() {
         return checksum;
-    }
-
-    //Serialization
-    private Object writeReplace() {
-        return new SerializationProxy(this);
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Proxy required.");
-    }
-
-    private static class SerializationProxy implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final String checksum;
-        private final int part;
-        private final Mark mark;
-
-        public SerializationProxy(ComparisonItem target) {
-            this.checksum = target.checksum;
-            this.part = target.part;
-            this.mark = target.mark;
-        }
-
-        private Object readResolve() {
-            return new ComparisonItem(checksum, part, mark);
-        }
     }
 }

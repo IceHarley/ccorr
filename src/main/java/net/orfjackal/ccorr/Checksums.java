@@ -25,27 +25,4 @@ public class Checksums implements Serializable {
     public String get(int index) {
         return isValidIndex(index) ? checksums.get(index) : null;
     }
-
-    //Serialization
-    private Object writeReplace() {
-        return new SerializationProxy(this);
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Proxy required.");
-    }
-
-    private static class SerializationProxy implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private List<String> checksums;
-
-        public SerializationProxy(Checksums target) {
-            this.checksums = target.checksums;
-        }
-
-        private Object readResolve() {
-            return new Checksums(checksums);
-        }
-    }
 }

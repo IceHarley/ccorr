@@ -240,15 +240,6 @@ public class Comparison implements Serializable {
         }
     }
 
-    /**
-     * Sets the mark in the given index. If {@link Settings#isMarkMirroringEnabled() isMarkMirroringEnabled} returns
-     * true, the mark is mirrored.
-     *
-     * @param difference the index of the difference
-     * @param file       the index of the file
-     * @param mark       the mark, which can be UNDEFINED, GOOD, BAD, UNSURE, or any
-     *                   integer
-     */
     public void setMark(int difference, int file, Mark mark) {
         if (this.isGoodIndex(difference, file)) {
             ComparisonItem item = getItem(difference, file);
@@ -507,48 +498,5 @@ public class Comparison implements Serializable {
 
         Log.print("Comparison.markRowUndefined: UNDEFINED set.");
         return true;
-    }
-
-    //Serialization
-    private Object writeReplace() {
-        return new SerializationProxy(this);
-    }
-
-    private void readObject(ObjectInputStream stream) throws InvalidObjectException {
-        throw new InvalidObjectException("Proxy required.");
-    }
-
-    private static class SerializationProxy implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final String name;
-        private final ChecksumFiles files;
-        private final ComparisonItems items;
-        private final Similarity similarity;
-        private final boolean needsUpdating;
-        private List<Integer> partsThatDiffer = new ArrayList<Integer>();
-        private final NumberOfDifferences numberOfDifferences;
-
-        public SerializationProxy(Comparison target) {
-            this.name = target.name;
-            this.files = target.files;
-            this.items = target.items;
-            this.similarity = target.similarity;
-            this.needsUpdating = target.needsUpdating;
-            this.partsThatDiffer = target.partsThatDiffer;
-            this.numberOfDifferences = target.numberOfDifferences;
-        }
-
-        private Object readResolve() {
-            Comparison target = new Comparison();
-            target.name = this.name;
-            target.files = this.files;
-            target.items = this.items;
-            target.similarity = this.similarity;
-            target.needsUpdating = this.needsUpdating;
-            target.partsThatDiffer = this.partsThatDiffer;
-            target.numberOfDifferences = this.numberOfDifferences;
-            return target;
-        }
     }
 }

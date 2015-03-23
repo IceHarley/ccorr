@@ -51,11 +51,6 @@ public class Settings implements Serializable {
     private int writeBufferLength = 1024 * 1024;     // 1 MB
 
     /**
-     * Whether mark mirroring is enabled.
-     */
-    private boolean markMirroringEnabled = true;
-
-    /**
      * Current working directory for file dialogs.
      */
     private File currentDirectory = new File("./");
@@ -123,24 +118,6 @@ public class Settings implements Serializable {
      */
     public static int getWriteBufferLength() {
         return settings.writeBufferLength;
-    }
-
-    /**
-     * Sets if mark mirroring is enabled.
-     *
-     * @param enabled true to enable, false to disable
-     */
-    public static void setMarkMirroringEnabled(boolean enabled) {
-        settings.markMirroringEnabled = enabled;
-    }
-
-    /**
-     * Returns whether mark mirroring is enabled.
-     *
-     * @return true if enabled, otherwise false
-     */
-    public static boolean isMarkMirroringEnabled() {
-        return settings.markMirroringEnabled;
     }
 
     /**
