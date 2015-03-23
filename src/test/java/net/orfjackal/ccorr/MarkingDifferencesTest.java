@@ -167,7 +167,7 @@ public class MarkingDifferencesTest extends Assert {
         c.setMark(DIFF_0, 0, Mark.GOOD);
         c.setMark(DIFF_1, 0, Mark.BAD);
 
-        c.markRowUndefined(0, c.getDifferences() - 1);
+        c.markRowsUndefined(0, c.getDifferences() - 1);
 
         assertEquals(Mark.UNDEFINED, c.getMark(DIFF_0, 0));
         assertEquals(Mark.UNDEFINED, c.getMark(DIFF_1, 0));

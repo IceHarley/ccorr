@@ -53,7 +53,7 @@ public class CombiningGoodPartsTest extends Assert {
         Comparison c = new Comparison();
         c.doCompare();
 
-        assertNull(c.createGoodCombination());
+        assertNull(Comparison.createGoodCombination(c));
     }
 
     @Test
@@ -63,14 +63,14 @@ public class CombiningGoodPartsTest extends Assert {
         c.addFile(util.createChecksumFile(PART_LENGTH * 2));
         c.doCompare();
 
-        assertNull(c.createGoodCombination());
+        assertNull(Comparison.createGoodCombination(c));
     }
 
     @Test
     public void when_no_differences_are_marked_good_then_a_good_combination_cannot_be_created() throws IOException {
         Comparison c = comparisonWithTwoDiffs();
 
-        assertNull(c.createGoodCombination());
+        assertNull(Comparison.createGoodCombination(c));
     }
 
     @Test
@@ -80,14 +80,14 @@ public class CombiningGoodPartsTest extends Assert {
         c.setMark(DIFF_0, 0, Mark.BAD);
         c.setMark(DIFF_0, 1, Mark.GOOD);
 
-        assertNull(c.createGoodCombination());
+        assertNull(Comparison.createGoodCombination(c));
     }
 
     @Test
     public void when_each_difference_has_one_part_marked_good_then_a_good_combination_can_be_created() throws IOException {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
-        assertNotNull(c.createGoodCombination());
+        assertNotNull(Comparison.createGoodCombination(c));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class CombiningGoodPartsTest extends Assert {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
         File result = util.uniqueFile();
-        c.createGoodCombination().writeFile(result);
+        Comparison.createGoodCombination(c).writeFile(result);
 
         c.addFile(ChecksumFileFactory.createChecksumFile(result, PART_LENGTH, ALGORITHM));
         c.doCompare();
@@ -111,7 +111,7 @@ public class CombiningGoodPartsTest extends Assert {
         ProgressMonitorRepository.set(monitor);
 
         File result = util.uniqueFile();
-        c.createGoodCombination().writeFile(result);
+        Comparison.createGoodCombination(c).writeFile(result);
 
         verify(monitor).setMinimum(0);
         verify(monitor).setMaximum(100);

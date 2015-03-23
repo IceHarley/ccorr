@@ -282,7 +282,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Represents the corresponding method in the comparison.
      */
     public FileCombination createGoodCombination() {
-        return comparison.createGoodCombination();
+        return Comparison.createGoodCombination(comparison);
     }
 
     /**
@@ -319,7 +319,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Represents the corresponding method in the comparison.
      */
     public boolean markRowUndefined(int start, int end) {
-        boolean successful = this.comparison.markRowUndefined(start, end);
+        boolean successful = this.comparison.markRowsUndefined(start, end);
         if (successful) {
             isModified = true;
             fireTableRowsUpdated(start, end);

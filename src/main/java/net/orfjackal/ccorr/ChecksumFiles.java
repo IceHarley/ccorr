@@ -33,8 +33,12 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return files.get(index);
     }
 
-    public void add(ChecksumFile file) {
-        files.add(file);
+    public boolean add(ChecksumFile file) {
+        if (isValidFileToAdd(file) && !isAlreadyAdded(file)) {
+            files.add(file);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -42,17 +46,54 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return files.iterator();
     }
 
-    public int indexOf(ChecksumFile file) {
-        return files.indexOf(file);
-    }
-
-    public boolean remove(ChecksumFile file) {
-        return files.remove(file);
+    public boolean remove(int index) {
+        return isValidFileIndex(index) && files.remove(index) != null;
     }
 
     public boolean arePartsEquals(int file1, int file2, int part) {
         String checksum1 = files.get(file1).getChecksum(part);
         String checksum2 = files.get(file2).getChecksum(part);
         return checksum1.equals(checksum2);
+    }
+
+    public boolean isValidFileIndex(int file) {
+        return file >= 0 && file < size();
+    }
+
+    public ChecksumFile getFile(int file) {
+        if (!isValidFileIndex(file))
+            throw new IllegalArgumentException();
+        return get(file);
+    }
+
+    public long getPartLength() {
+        if (size() == 0)
+            return -1;
+        return get(0).getPartLength();
+    }
+
+    public String getAlgorithm() {
+        if (size() == 0)
+            return null;
+        return get(0).getAlgorithm();
+    }
+
+    boolean hasSameAlgorithm(ChecksumFile file) {
+        return (getAlgorithm() == null || file.getAlgorithm().equals(getAlgorithm()));
+    }
+
+    boolean hasSamePartLength(ChecksumFile file) {
+        return getPartLength() <= 0 || file.getPartLength() == getPartLength();
+    }
+
+    boolean isValidFileToAdd(ChecksumFile file) {
+        return (file != null && hasSamePartLength(file))
+                && hasSameAlgorithm(file);
+    }
+
+    private boolean isAlreadyAdded(ChecksumFile file) {
+        for (ChecksumFile f : this)
+            if (file == f) return true;
+        return false;
     }
 }
