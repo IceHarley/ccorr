@@ -39,10 +39,7 @@ class FileCombinationCreator {
                     fc.addItem(file, start, end);
                     continue item;
                 }
-                if (isLastIndex(filesCount, fileIndex)) {
-                    // no good parts found, abort
-                    return null;
-                }
+                if (isLastIndex(filesCount, fileIndex)) return null;
             }
         }
         return fc;

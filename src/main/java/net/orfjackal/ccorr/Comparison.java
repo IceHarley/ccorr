@@ -35,6 +35,7 @@ public class Comparison implements Serializable {
     }
 
     public void doCompare() {
+        partsThatDiffer = new ArrayList<Integer>();
         if (files.size() > 1)
             compareMultipleFiles();
         else if (files.size() == 1)
@@ -49,7 +50,6 @@ public class Comparison implements Serializable {
     }
 
     private void compareMultipleFiles() {
-        partsThatDiffer = new ArrayList<Integer>();
         numberOfDifferences = new NumberOfDifferences(files.size());
         compareEachFilesPair();
         storeComparisonDataToList();
@@ -86,14 +86,12 @@ public class Comparison implements Serializable {
     }
 
     private void compareNoFile() {
-        partsThatDiffer = new ArrayList<Integer>();
         items = new ComparisonItems();
         similarity = new Similarity(0);
         needsUpdating = false;
     }
 
     private void compareSingleFile() {
-        partsThatDiffer = new ArrayList<Integer>();
         items = new ComparisonItems();
         similarity = new Similarity(1);
         similarity.set(0, 0, 1.0);
