@@ -20,8 +20,7 @@ class FileCombinationCreator {
     }
 
     private FileCombination getFileCombination() {
-        FileCombination fc = new FileCombination();
-
+        FileCombination fc = new MonitoredFileCombination();
         long nextStart = 0;
         int differences = comparison.getDifferences();
         item:
@@ -46,20 +45,15 @@ class FileCombinationCreator {
     }
 
     private long findStartPosition(long nextStart, boolean isLastDifference, long end) {
-        if (!isLastDifference) {
-
+        if (!isLastDifference)
             nextStart = end + 1;
-        }
         return nextStart;
     }
 
     private long findEndPosition(int difference, boolean isLastDifference, ChecksumFile checksumFile) {
         long end;
-        if (isLastDifference) {
-            end = checksumFile.getSourceFileLength();
-        } else {
-            end = checksumFile.getEndOffset(difference);
-        }
+        if (isLastDifference) end = checksumFile.getSourceFileLength();
+        else end = checksumFile.getEndOffset(difference);
         return end;
     }
 
