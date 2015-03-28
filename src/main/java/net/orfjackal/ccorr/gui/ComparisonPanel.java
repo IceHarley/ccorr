@@ -202,12 +202,12 @@ public class ComparisonPanel extends TabPanel {
      * Writes a good combination to a file.
      */
     public void writeOutput() {
-        FileCombination fc = tableModel.createGoodCombination();
-        if (fc == null) {
+        GoodCombination gc = tableModel.createGoodCombination();
+        if (GoodCombination.NOT_EXISTS.equals(gc)) {
 
             // TODO: possible combinations
             JOptionPane.showMessageDialog(this,
-                    "It is not possible to create a good output file. "
+                    "It is not possible to extract a good output file. "
                             + "More good parts are needed.",
                     "Error", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -243,7 +243,9 @@ public class ComparisonPanel extends TabPanel {
             ProgressMonitorRepository.set(new ProgressMonitor(this,
                     "Writing output", "", 0, 0));
 
-            boolean successful = fc.writeFile(chooser.getSelectedFile());
+            GoodCombinationWriter goodCombinationWriter = new MonitoredGoodCombinationWriter(gc);
+            OutputStream stream = StreamFactory.openOutputStream(chooser.getSelectedFile());
+            boolean successful = goodCombinationWriter.writeCombination(stream);
             Settings.setCurrentDirectory(chooser.getSelectedFile());
             if (!successful) {
                 JOptionPane.showMessageDialog(this,

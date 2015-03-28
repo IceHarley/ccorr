@@ -38,7 +38,7 @@ public class TempDirectory {
             throw new IllegalArgumentException("Already exists: " + directory);
         }
         if (!directory.mkdir()) {
-            throw new RuntimeException("Unable to create directory: " + directory);
+            throw new RuntimeException("Unable to extract directory: " + directory);
         }
     }
 

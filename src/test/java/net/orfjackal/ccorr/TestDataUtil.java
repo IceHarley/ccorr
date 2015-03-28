@@ -55,7 +55,7 @@ public class TestDataUtil {
     }
 
     private static void writeDummyData(File file, long length) throws IOException {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(file), FileCombination.BUFFER_LENGTH);
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(file), GoodCombinationWriter.BUFFER_LENGTH);
         for (long pos = 0; pos < length; pos++) {
             out.write((byte) pos);
         }

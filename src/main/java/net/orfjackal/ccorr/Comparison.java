@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * This class is used to represent a CCorr Comparison Project. <code>Comparison</code> is the central class of
  * Corruption Corrector and it is used to compare <code>ChecksumFile</code> objects, mark corrupt/uncorrupted parts and
- * create <code>FileCombination</code> objects. The files to be compared need to be first added to the
+ * extract <code>FileCombination</code> objects. The files to be compared need to be first added to the
  * <code>Comparison</code>, after which they are compared with the <code>doCompare</code> method. <code>doCompare</code>
  * needs to be run after adding or removing files, because otherwise the data is not up to date and most of the methods
  * will refuse to work.
@@ -205,17 +205,17 @@ public class Comparison implements Serializable {
         this.needsUpdating = true;
     }
 
-    public static FileCombination createGoodCombination(Comparison comparison) {
+    public static GoodCombination createGoodCombination(Comparison comparison) {
         Log.print("createGoodCombination: Start");
         if (comparison.needsUpdating) {
             Log.print("createGoodCombination: Aborted, needsUpdating == true");
-            return null;
+            return GoodCombination.NOT_EXISTS;
         }
         if (comparison.getDifferences() == 0) {
             Log.print("createGoodCombination: Aborted, no parts available");
-            return null;
+            return GoodCombination.NOT_EXISTS;
         }
-        return new FileCombinationCreator(comparison).create();
+        return new GoodCombinationExtractor(comparison).extract();
     }
 
     public boolean markRowsUndefined(int start, int end) {

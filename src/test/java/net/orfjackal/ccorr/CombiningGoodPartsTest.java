@@ -21,15 +21,27 @@ public class CombiningGoodPartsTest extends Assert {
     private static final int DIFF_1 = 1;
 
     private TestDataUtil util = new TestDataUtil();
+    private GoodCombination goodCombination;
 
     @Before
     public void initUtil() throws IOException {
         util.create();
+        goodCombination = null;
     }
 
     @After
     public void disposeUtil() {
+        try {
+            if (goodCombination != null)
+                goodCombination.closeStreams();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         util.dispose();
+    }
+
+    private void getGoodCombination(Comparison c) {
+        goodCombination = Comparison.createGoodCombination(c);
     }
 
     private Comparison comparisonWithTwoDiffs() throws IOException {
@@ -53,24 +65,27 @@ public class CombiningGoodPartsTest extends Assert {
         Comparison c = new Comparison();
         c.doCompare();
 
-        assertNull(Comparison.createGoodCombination(c));
+        getGoodCombination(c);
+        assertEquals(GoodCombination.NOT_EXISTS, goodCombination);
     }
 
     @Test
     public void when_there_is_only_one_file_then_a_good_combination_cannot_be_created() throws IOException {
-        // TODO: maybe this behaviour should be changed, so that it's possible to create a good combination
+        // TODO: maybe this behaviour should be changed, so that it's possible to extract a good combination
         Comparison c = new Comparison();
         c.addFile(util.createChecksumFile(PART_LENGTH * 2));
         c.doCompare();
 
-        assertNull(Comparison.createGoodCombination(c));
+        getGoodCombination(c);
+        assertEquals(GoodCombination.NOT_EXISTS, goodCombination);
     }
 
     @Test
     public void when_no_differences_are_marked_good_then_a_good_combination_cannot_be_created() throws IOException {
         Comparison c = comparisonWithTwoDiffs();
 
-        assertNull(Comparison.createGoodCombination(c));
+        getGoodCombination(c);
+        assertEquals(GoodCombination.NOT_EXISTS, goodCombination);
     }
 
     @Test
@@ -80,24 +95,28 @@ public class CombiningGoodPartsTest extends Assert {
         c.setMark(DIFF_0, 0, Mark.BAD);
         c.setMark(DIFF_0, 1, Mark.GOOD);
 
-        assertNull(Comparison.createGoodCombination(c));
+        getGoodCombination(c);
+        assertEquals(GoodCombination.NOT_EXISTS, goodCombination);
     }
 
     @Test
     public void when_each_difference_has_one_part_marked_good_then_a_good_combination_can_be_created() throws IOException {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
-        assertNotNull(Comparison.createGoodCombination(c));
+        getGoodCombination(c);
+        assertNotSame(GoodCombination.NOT_EXISTS, goodCombination);
     }
 
     @Test
     public void when_a_good_combination_is_written_then_it_contains_all_good_parts() throws IOException {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
-        File result = util.uniqueFile();
-        Comparison.createGoodCombination(c).writeFile(result);
+        File file = util.uniqueFile();
+        BufferedOutputStream result = StreamFactory.openOutputStream(file);
+        getGoodCombination(c);
+        new GoodCombinationWriter(goodCombination).writeCombination(result);
 
-        c.addFile(ChecksumFileFactory.createChecksumFile(result, PART_LENGTH, ALGORITHM));
+        c.addFile(ChecksumFileFactory.createChecksumFile(file, PART_LENGTH, ALGORITHM));
         c.doCompare();
         assertEquals(Mark.GOOD, c.getMark(DIFF_0, 2));
         assertEquals(Mark.GOOD, c.getMark(DIFF_1, 2));
@@ -110,8 +129,8 @@ public class CombiningGoodPartsTest extends Assert {
         ProgressMonitor monitor = spy(new ProgressMonitor(null, null, null, 0, 0));
         ProgressMonitorRepository.set(monitor);
 
-        File result = util.uniqueFile();
-        Comparison.createGoodCombination(c).writeFile(result);
+        getGoodCombination(c);
+        new MonitoredGoodCombinationWriter(goodCombination).writeCombination(new ByteArrayOutputStream());
 
         verify(monitor).setMinimum(0);
         verify(monitor).setMaximum(100);

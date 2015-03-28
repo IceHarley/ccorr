@@ -5,6 +5,6 @@
 package net.orfjackal.ccorr;
 
 public class UserCancellationException extends RuntimeException {
-    public UserCancellationException(String s) {
+    public UserCancellationException() {
     }
 }

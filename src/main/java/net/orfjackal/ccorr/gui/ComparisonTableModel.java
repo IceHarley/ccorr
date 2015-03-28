@@ -40,7 +40,7 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Creates a new instance of this class.
      *
-     * @param comparison the Comparison object that this should represent, or null to create a new Comparison
+     * @param comparison the Comparison object that this should represent, or null to extract a new Comparison
      */
     public ComparisonTableModel(Comparison comparison) {
         if (comparison == null) {
@@ -281,7 +281,7 @@ public class ComparisonTableModel extends AbstractTableModel {
     /**
      * Represents the corresponding method in the comparison.
      */
-    public FileCombination createGoodCombination() {
+    public GoodCombination createGoodCombination() {
         return Comparison.createGoodCombination(comparison);
     }
 

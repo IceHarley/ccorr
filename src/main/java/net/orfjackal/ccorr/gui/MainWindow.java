@@ -143,14 +143,14 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Used to create a unique name for each <code>ComparisonPanel</code>.
+     * Used to extract a unique name for each <code>ComparisonPanel</code>.
      */
     private int comparisonNumber = 0;
 
     /**
      * Opens a <code>ComparisonPanel</code> to the central <code>JTabbedPane</code>.
      *
-     * @param c the <code>Comparison</code> to be opened, or null to create a new one
+     * @param c the <code>Comparison</code> to be opened, or null to extract a new one
      */
     public void newComparisonPanel(Comparison c) {
         if (c != null) {
@@ -193,7 +193,7 @@ public class MainWindow extends JFrame {
             c = new Comparison();
         }
 
-        // create a new tab
+        // extract a new tab
         comparisonNumber++;
         ComparisonPanel panel = new ComparisonPanel(c);
 

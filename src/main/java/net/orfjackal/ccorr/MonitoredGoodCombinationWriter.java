@@ -5,19 +5,23 @@
 package net.orfjackal.ccorr;
 
 import javax.swing.ProgressMonitor;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
-public class MonitoredFileCombination extends FileCombination {
+public class MonitoredGoodCombinationWriter extends GoodCombinationWriter {
     ProgressMonitor monitor = ProgressMonitorRepository.get();
     private int lastMonitorValue;
     private long progressValue;
     private long progressMax;
 
+    public MonitoredGoodCombinationWriter(GoodCombination parts) {
+        super(parts);
+    }
+
     @Override
-    public boolean writeFile(File file) {
+    public boolean writeCombination(OutputStream output) {
         setupProgressMonitor();
-        boolean result = super.writeFile(file);
+        boolean result = super.writeCombination(output);
         closeProgressMonitor();
         return result;
     }
@@ -39,7 +43,7 @@ public class MonitoredFileCombination extends FileCombination {
     }
 
     @Override
-    protected void copyData(FilePart item) throws IOException {
+    protected void copyData(GoodCombinationPart item) throws IOException {
         super.copyData(item);
     }
 
