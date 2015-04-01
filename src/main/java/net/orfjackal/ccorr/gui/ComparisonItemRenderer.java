@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.ComparisonItem;
+import net.orfjackal.ccorr.comparison.ComparisonItem;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -15,7 +15,7 @@ import java.awt.*;
  *
  * @author Esko Luontola
  */
-class ComparisonItemRenderer extends JLabel implements TableCellRenderer {
+public class ComparisonItemRenderer extends JLabel implements TableCellRenderer {
 
     public static final Color COLOR_UNDEFINED = Color.white;
     public static final Color COLOR_GOOD = new Color(150, 255, 150);

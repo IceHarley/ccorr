@@ -4,7 +4,12 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.*;
+import net.orfjackal.ccorr.checksum.ChecksumFile;
+import net.orfjackal.ccorr.combination.GoodCombination;
+import net.orfjackal.ccorr.comparison.Comparison;
+import net.orfjackal.ccorr.comparison.ComparisonLoader;
+import net.orfjackal.ccorr.comparison.GoodPartsMarker;
+import net.orfjackal.ccorr.comparison.Mark;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.File;

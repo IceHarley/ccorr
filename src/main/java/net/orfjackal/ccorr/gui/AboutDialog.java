@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.Settings;
+import net.orfjackal.ccorr.settings.Settings;
 
 import javax.swing.*;
 import java.awt.*;

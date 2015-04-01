@@ -86,7 +86,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>net.orfjackal.ccorr.Main</mainClass>
+                            <mainClass>net.orfjackal.ccorr.gui.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

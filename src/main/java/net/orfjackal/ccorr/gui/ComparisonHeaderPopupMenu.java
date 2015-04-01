@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.ChecksumFile;
+import net.orfjackal.ccorr.checksum.ChecksumFile;
 
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
