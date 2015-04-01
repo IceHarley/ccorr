@@ -5,17 +5,15 @@
 package net.orfjackal.ccorr;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 public class SettingsLoader {
+    private final static Logger logger = Logger.getLogger(SettingsLoader.class.getName());
     private static File settingsFile = new File(System.getProperty("user.home")
             + System.getProperty("file.separator") + ".ccorr.cfg");
 
     public static void saveSettings() {
-        if (ObjectSaver.saveToFile(settingsFile, Settings.settings)) {
-            Log.print("Settings: Saved");
-        } else {
-            Log.print("Settings: Saving Failed");
-        }
+        logger.info(ObjectSaver.saveToFile(settingsFile, Settings.settings) ? "Settings: Saved" : "Settings: Saving Failed");
     }
 
     public static Settings loadSettings() {
@@ -23,9 +21,9 @@ public class SettingsLoader {
         Object obj = ObjectSaver.loadFromFile(settingsFile);
         if (obj instanceof Settings) {
             settings = (Settings) (obj);
-            Log.print("Settings: Loaded");
+            logger.info("Settings: Loaded");
         } else {
-            Log.print("Settings: Loading Failed. Defaults will be used");
+            logger.warning("Settings: Loading Failed. Defaults will be used");
         }
         return settings;
     }

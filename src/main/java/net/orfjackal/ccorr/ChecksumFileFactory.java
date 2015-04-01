@@ -5,6 +5,8 @@
 package net.orfjackal.ccorr;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is used to represent a CCorr Checksum File. A new <code>ChecksumFile</code> is created with the
@@ -15,6 +17,7 @@ import java.io.*;
  * @author Esko Luontola
  */
 public class ChecksumFileFactory  {
+    private final static Logger logger = Logger.getLogger(ChecksumFileFactory.class.getName());
 
     public static final ChecksumFile EMPTY_DATA = new ChecksumFile(null, "", -1, null, -1);
 
@@ -23,7 +26,7 @@ public class ChecksumFileFactory  {
     }
 
     private static ChecksumFile generateChecksums(File sourceFile, long partLength, String algorithm) {
-        Log.print("generateChecksums(" + partLength + ", " + algorithm + ") from " + sourceFile);
+        logger.log(Level.INFO, "generateChecksums({0}, {1}) from {2}", new Object[]{partLength, algorithm, sourceFile});
 
         FileDivider fileDivider = new FileDivider(sourceFile, partLength);
         FileChecksumsCalculator checksumsCalculator = new MonitoredChecksumsCalculator(fileDivider, new CRC(CRCAlgorithmFactory.getByName(algorithm)));
@@ -31,12 +34,7 @@ public class ChecksumFileFactory  {
 
         boolean successful = !EMPTY_DATA.equals(checksumFile);
 
-        if (successful) {
-            Log.println("generateChecksums: Done");
-        }
-        else {
-            Log.println("generateChecksums: Failed");
-        }
+        logger.info(successful ? "generateChecksums: Done" : "generateChecksums: Failed");
 
         return checksumFile;
     }

@@ -7,8 +7,12 @@ package net.orfjackal.ccorr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GoodCombination implements Iterable<GoodCombinationPart> {
+    private final static Logger logger = Logger.getLogger(GoodCombination.class.getName());
+
     public static final GoodCombination NOT_EXISTS = new GoodCombination();
 
     List<GoodCombinationPart> parts;
@@ -22,10 +26,10 @@ public class GoodCombination implements Iterable<GoodCombinationPart> {
     public void add(GoodCombinationPart part) {
         if (isValidPart(part)) {
             parts.add(part);
-            Log.print("GoodCombination.add:\t" + part);
+            logger.log(Level.INFO, "GoodCombination.add:\t{0}", part);
         }
         else {
-            Log.print("FAILED: GoodCombination.addItem:\t" + part);
+            logger.log(Level.INFO, "FAILED: GoodCombination.addItem:\t{0}", part);
         }
     }
 

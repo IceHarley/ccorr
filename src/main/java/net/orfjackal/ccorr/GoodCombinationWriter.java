@@ -5,6 +5,8 @@
 package net.orfjackal.ccorr;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class for combining many files in to one. After creating a new instance of this class, the <code>addItem</code>
@@ -15,6 +17,7 @@ import java.io.*;
  * @author Esko Luontola
  */
 public class GoodCombinationWriter {
+    private final static Logger logger = Logger.getLogger(GoodCombinationWriter.class.getName());
 
     public static final int BUFFER_LENGTH = 1024 * 1024;
     private GoodCombination parts;
@@ -29,23 +32,19 @@ public class GoodCombinationWriter {
         this.output = output;
         boolean successful = true;
         try {
-            Log.print("writeCombination: writing " + this.getOutputFilesTotalLength() + " bytes to " + output);
+            logger.log(Level.INFO, "writeCombination: writing {0} bytes to {1}", new Object[] {getOutputFilesTotalLength(), output });
             tryWriteFile();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.print("writeCombination: Error (" + e + ")");
+            logger.throwing("GoodCombinationWriter", "writeCombination", e);
             successful = false;
         }
         catch (UserCancellationException e) {
-            Log.print(e.getMessage());
+            logger.throwing("GoodCombinationWriter", "writeCombination", e);
             successful = false;
         }
 
-        if (successful) {
-            Log.println("writeCombination: Done");
-        } else {
-            Log.println("writeCombination: Failed");
-        }
+        logger.info(successful ? "writeCombination: Done" : "writeCombination: Failed");
         return successful;
     }
 
@@ -73,7 +72,7 @@ public class GoodCombinationWriter {
     }
 
     protected void writeItem(GoodCombinationPart part) throws IOException {
-        Log.print("writeCombination: writing part " + part + " from stream " + parts.getStream(part.getStreamIndex()));
+        logger.log(Level.INFO, "writeCombination: writing part {0) from stream {1}", new Object[] { part, parts.getStream(part.getStreamIndex()) });
         input = parts.getStream(part.getStreamIndex());
         copyData(part);
     }

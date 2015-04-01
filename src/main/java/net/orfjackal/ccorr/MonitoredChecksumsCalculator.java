@@ -5,8 +5,11 @@
 package net.orfjackal.ccorr;
 
 import javax.swing.*;
+import java.util.logging.Logger;
 
 public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
+    private final static Logger logger = Logger.getLogger(MonitoredChecksumsCalculator.class.getName());
+
     private ProgressMonitor monitor;
     private int lastMonitorValue;
     private int currentPart;
@@ -61,7 +64,7 @@ public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
             }
 
             if (monitor.isCanceled()) {
-                Log.print("updateChecksums: Cancelled by user");
+                logger.info("updateChecksums: Cancelled by user");
                 throw new Exception("Cancelled by user");
             }
         }

@@ -6,8 +6,11 @@ package net.orfjackal.ccorr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 class GoodCombinationExtractor {
+    private final static Logger logger = Logger.getLogger(GoodCombinationExtractor.class.getName());
+
     private Comparison comparison;
     private int differences;
     private GoodCombination gc;
@@ -19,7 +22,7 @@ class GoodCombinationExtractor {
 
     public GoodCombination extract() {
         GoodCombination goodCombination = extractGoodCombination();
-        Log.print("createGoodCombination: Done");
+        logger.info("createGoodCombination: Done");
         return goodCombination;
     }
 

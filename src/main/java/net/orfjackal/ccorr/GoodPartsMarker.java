@@ -5,8 +5,11 @@
 package net.orfjackal.ccorr;
 
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GoodPartsMarker {
+    private final static Logger logger = Logger.getLogger(GoodPartsMarker.class.getName());
 
     private static int good;
     private static int unsure;
@@ -138,12 +141,12 @@ public class GoodPartsMarker {
     }
 
     private void logStatistics() {
-        Log.print("Comparison.markGoodParts: " + toString());
+        logger.log(Level.INFO, "Comparison.markGoodParts: {0}", toString());
     }
 
     private boolean validateRange(int start, int end) {
         if (start < 0 || end >= comparison.getDifferences() || start > end) {
-            Log.print("Comparison.markGoodParts: Invalid range, aborting.");
+            logger.severe("Comparison.markGoodParts: Invalid range, aborting.");
             return false;
         }
         return true;

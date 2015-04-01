@@ -4,9 +4,9 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.Log;
-
 import javax.swing.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The common properties of a <code>JTabbedPane</code> item.
@@ -14,6 +14,7 @@ import javax.swing.*;
  * @author Esko Luontola
  */
 public abstract class TabPanel extends JPanel {
+    private final static Logger logger = Logger.getLogger(TabPanel.class.getName());
 
     /**
      * Removes this object from the JTabbedPane. Override this method if you need to do something before the tab is
@@ -27,7 +28,7 @@ public abstract class TabPanel extends JPanel {
             parent.remove(this);
             return true;
         } else {
-            Log.println("TabPanel.close(): Aborted, parent of " + this + " is " + this.getParent());
+            logger.log(Level.INFO, "TabPanel.close(): Aborted, parent of {0} is {1}", new Object[] {this, this.getParent()});
             return false;
         }
     }

@@ -6,6 +6,8 @@ package net.orfjackal.ccorr;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is used to represent a CCorr Comparison Project. <code>Comparison</code> is the central class of
@@ -18,6 +20,8 @@ import java.util.*;
  * @author Esko Luontola
  */
 public class Comparison implements Serializable {
+    private final static Logger logger = Logger.getLogger(Comparison.class.getName());
+
     private String name;
     private ChecksumFiles files;
     private ComparisonItems items;
@@ -46,7 +50,7 @@ public class Comparison implements Serializable {
     }
 
     private void logComparison() {
-        Log.println(this.getDifferences() > 100 ? "doCompare:\n[over 100 differences, output hidden]" : "doCompare:\n" + this.toString());
+        logger.info(this.getDifferences() > 100 ? "doCompare:\n[over 100 differences, output hidden]" : "doCompare:\n" + this.toString());
     }
 
     private void compareMultipleFiles() {
@@ -191,7 +195,7 @@ public class Comparison implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-        Log.print("Comparison.setName: Set name to \"" + name + "\".");
+        logger.log(Level.INFO, "Comparison.setName: Set name to \"{0}\".", name);
     }
 
     public void addFile(ChecksumFile file) {
@@ -201,18 +205,18 @@ public class Comparison implements Serializable {
 
     public void removeFile(int index) {
         files.remove(index);
-        Log.print("Comparison.removeFile: File #" + (index + 1) + " removed.");
+        logger.info("Comparison.removeFile: File #" + (index + 1) + " removed.");
         this.needsUpdating = true;
     }
 
     public static GoodCombination createGoodCombination(Comparison comparison) {
-        Log.print("createGoodCombination: Start");
+        logger.info("createGoodCombination: Start");
         if (comparison.needsUpdating) {
-            Log.print("createGoodCombination: Aborted, needsUpdating == true");
+            logger.info("createGoodCombination: Aborted, needsUpdating == true");
             return GoodCombination.NOT_EXISTS;
         }
         if (comparison.getDifferences() == 0) {
-            Log.print("createGoodCombination: Aborted, no parts available");
+            logger.info("createGoodCombination: Aborted, no parts available");
             return GoodCombination.NOT_EXISTS;
         }
         return new GoodCombinationExtractor(comparison).extract();
@@ -220,14 +224,14 @@ public class Comparison implements Serializable {
 
     public boolean markRowsUndefined(int start, int end) {
         if (!validateRange(start, end)) {
-            Log.print("Comparison.markRowsUndefined: Invalid range, aborting.");
+            logger.info("Comparison.markRowsUndefined: Invalid range, aborting.");
             return false;
         }
         for (int row = start; row <= end; row++)
             for (int col = 0; col < files.size(); col++)
                 markRowUndefined(row, col);
 
-        Log.print("Comparison.markRowsUndefined: UNDEFINED set.");
+        logger.info("Comparison.markRowsUndefined: UNDEFINED set.");
         return true;
     }
 

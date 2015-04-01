@@ -6,16 +6,16 @@ package net.orfjackal.ccorr;
 
 import net.orfjackal.ccorr.gui.MainWindow;
 
-/**
- * Starts Corruption Corrector
- */
+import java.util.logging.Logger;
+
 public class Main {
+    private final static Logger logger = Logger.getLogger(Main.class.getName());
 
     // TODO: redirect stdout and stderr to file (CCorr.log, overwrite if exists)
 
     public static void main(String[] args) {
-        Log.print("Corruption Corrector: Starting");
+        logger.info("Corruption Corrector: Starting");
         MainWindow.main(args);
-        Log.println("Corruption Corrector: Started");
+        logger.info("Corruption Corrector: Started");
     }
 }

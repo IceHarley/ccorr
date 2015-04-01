@@ -4,22 +4,14 @@
 
 package net.orfjackal.ccorr;
 
-//import java.beans.*;
-
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.*;
 
-/**
- * Saves and loads objects to and from a file. The objects must to be serializable. The file format used is gzipped
- * {@link ObjectOutputStream ObjectOutputStream}.
- *
- * @author Esko Luontola
- */
 public class ObjectSaver {
+    private final static Logger logger = Logger.getLogger(ObjectSaver.class.getName());
 
-    /**
-     * Private constructor.
-     */
     private ObjectSaver() {
     }
 
@@ -32,19 +24,11 @@ public class ObjectSaver {
      */
     public static boolean saveToFile(File file, Serializable obj) {
         if (file == null || obj == null) {
-            Log.print("ObjectSaver.saveToFile: Aborted, null arguments");
+            logger.severe("ObjectSaver.saveToFile: Aborted, null arguments");
             return false;
         }
 
         try {
-//          XMLEncoder output = 
-//              new XMLEncoder(
-//                  new GZIPOutputStream(
-//                      new BufferedOutputStream(
-//                          new FileOutputStream(file)
-//                      )
-//                  )
-//              );
             ObjectOutputStream output =
                     new ObjectOutputStream(
                             new GZIPOutputStream(
@@ -57,11 +41,11 @@ public class ObjectSaver {
             output.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.print("ObjectSaver.saveToFile: Aborted, " + e);
+            logger.throwing("ObjectSaver", "saveToFile", e);
             return false;
         }
 
-        Log.print("ObjectSaver.saveToFile: Done, wrote " + obj.getClass() + " to " + file);
+        logger.log(Level.INFO, "ObjectSaver.saveToFile: Done, wrote {0} to {1}", new Object[] {obj.getClass(), file});
         return true;
     }
 
@@ -73,20 +57,12 @@ public class ObjectSaver {
      */
     public static Object loadFromFile(File file) {
         if (file == null) {
-            Log.print("ObjectSaver.loadFromFile: Aborted, null arguments");
+            logger.severe("ObjectSaver.loadFromFile: Aborted, null arguments");
             return null;
         }
 
         Object result;
         try {
-//          XMLDecoder input = 
-//              new XMLDecoder(
-//                  new GZIPInputStream(
-//                      new BufferedInputStream(
-//                          new FileInputStream(file)
-//                      )
-//                  )
-//              );
             ObjectInputStream input =
                     new ObjectInputStream(
                             new GZIPInputStream(
@@ -99,11 +75,11 @@ public class ObjectSaver {
             input.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.print("ObjectSaver.loadFromFile: Aborted, " + e);
+            logger.throwing("ObjectSaver", "loadFromFile", e);
             return null;
         }
 
-        Log.print("ObjectSaver.loadFromFile: Done, read " + result.getClass() + " from " + file);
+        logger.log(Level.INFO, "ObjectSaver.saveToFile: Done, read {0} from {1}", new Object[]{result.getClass(), file});
         return result;
     }
 }

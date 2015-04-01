@@ -5,13 +5,16 @@
 package net.orfjackal.ccorr;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 public class StreamFactory {
+    private final static Logger logger = Logger.getLogger(SettingsLoader.class.getName());
+
     public static BufferedOutputStream openOutputStream(File file) {
         try {
             return tryOpenOutputStream(file);
         } catch (FileNotFoundException e) {
-            Log.println(e.getMessage());
+            logger.throwing("StreamFactory", "openOutputStream", e);
         }
         return null;
     }
@@ -26,7 +29,7 @@ public class StreamFactory {
         try {
             return tryOpenInputStream(file);
         } catch (FileNotFoundException e) {
-            Log.println(e.getMessage());
+            logger.throwing("StreamFactory", "openInputStream", e);
         }
         return null;
     }
