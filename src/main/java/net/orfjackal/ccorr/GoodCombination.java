@@ -27,8 +27,7 @@ public class GoodCombination implements Iterable<GoodCombinationPart> {
         if (isValidPart(part)) {
             parts.add(part);
             logger.log(Level.INFO, "GoodCombination.add:\t{0}", part);
-        }
-        else {
+        } else {
             logger.log(Level.INFO, "FAILED: GoodCombination.addItem:\t{0}", part);
         }
     }

@@ -9,7 +9,10 @@ import net.orfjackal.ccorr.ChecksumFile;
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Popupmenu that shows up when right clicking a file's header in a comparison.

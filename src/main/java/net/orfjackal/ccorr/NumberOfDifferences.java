@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.Serializable;
 
 public class NumberOfDifferences implements Serializable {
     int[][] numberOfDifferences;

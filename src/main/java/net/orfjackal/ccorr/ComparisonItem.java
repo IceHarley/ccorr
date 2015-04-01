@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * A class used to represent a differing part in a <code>Comparison</code>. <code>ComparisonItem</code> stores the

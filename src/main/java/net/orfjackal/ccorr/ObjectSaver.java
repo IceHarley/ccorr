@@ -7,7 +7,8 @@ package net.orfjackal.ccorr;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class ObjectSaver {
     private final static Logger logger = Logger.getLogger(ObjectSaver.class.getName());
@@ -45,7 +46,7 @@ public class ObjectSaver {
             return false;
         }
 
-        logger.log(Level.INFO, "ObjectSaver.saveToFile: Done, wrote {0} to {1}", new Object[] {obj.getClass(), file});
+        logger.log(Level.INFO, "ObjectSaver.saveToFile: Done, wrote {0} to {1}", new Object[]{obj.getClass(), file});
         return true;
     }
 

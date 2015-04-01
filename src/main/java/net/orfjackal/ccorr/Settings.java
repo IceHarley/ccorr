@@ -5,7 +5,8 @@
 package net.orfjackal.ccorr;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.Serializable;
 
 /**
  * Stores the global settings used by CCorr. The settings are loaded when this class is initiated and they are saved at
@@ -92,8 +93,7 @@ public class Settings implements Serializable {
     public static void setDefaultPartLength(long length) {
         if (length < FileDivider.MIN_PART_SIZE) {
             length = FileDivider.MIN_PART_SIZE;
-        }
-        else if (length > FileDivider.MAX_PART_SIZE) {
+        } else if (length > FileDivider.MAX_PART_SIZE) {
             length = FileDivider.MAX_PART_SIZE;
         }
         settings.defaultPartLength = length;

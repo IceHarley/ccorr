@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Esko Luontola
  */
-public class ChecksumFileFactory  {
+public class ChecksumFileFactory {
     private final static Logger logger = Logger.getLogger(ChecksumFileFactory.class.getName());
 
     public static final ChecksumFile EMPTY_DATA = new ChecksumFile(null, "", -1, null, -1);

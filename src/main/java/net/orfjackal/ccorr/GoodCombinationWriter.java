@@ -4,7 +4,9 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,14 +34,13 @@ public class GoodCombinationWriter {
         this.output = output;
         boolean successful = true;
         try {
-            logger.log(Level.INFO, "writeCombination: writing {0} bytes to {1}", new Object[] {getOutputFilesTotalLength(), output });
+            logger.log(Level.INFO, "writeCombination: writing {0} bytes to {1}", new Object[]{getOutputFilesTotalLength(), output});
             tryWriteFile();
         } catch (IOException e) {
             e.printStackTrace();
             logger.throwing("GoodCombinationWriter", "writeCombination", e);
             successful = false;
-        }
-        catch (UserCancellationException e) {
+        } catch (UserCancellationException e) {
             logger.throwing("GoodCombinationWriter", "writeCombination", e);
             successful = false;
         }
@@ -60,8 +61,7 @@ public class GoodCombinationWriter {
     private void tryWriteFile() throws IOException {
         try {
             writeParts();
-        }
-        finally {
+        } finally {
             closeOutputStream();
         }
     }
@@ -72,7 +72,7 @@ public class GoodCombinationWriter {
     }
 
     protected void writeItem(GoodCombinationPart part) throws IOException {
-        logger.log(Level.INFO, "writeCombination: writing part {0) from stream {1}", new Object[] { part, parts.getStream(part.getStreamIndex()) });
+        logger.log(Level.INFO, "writeCombination: writing part {0) from stream {1}", new Object[]{part, parts.getStream(part.getStreamIndex())});
         input = parts.getStream(part.getStreamIndex());
         copyData(part);
     }

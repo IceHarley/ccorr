@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import javax.swing.ProgressMonitor;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
 

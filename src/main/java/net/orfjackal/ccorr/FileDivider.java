@@ -75,7 +75,7 @@ public class FileDivider {
         return sourceFile;
     }
 
-    public void close() throws IOException{
+    public void close() throws IOException {
         input.close();
     }
 

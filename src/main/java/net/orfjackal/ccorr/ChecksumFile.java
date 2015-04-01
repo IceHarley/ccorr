@@ -4,7 +4,8 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.File;
+import java.io.Serializable;
 
 public class ChecksumFile implements Serializable {
 
@@ -79,10 +80,10 @@ public class ChecksumFile implements Serializable {
 
         for (int i = 0; i < this.getParts(); i++)
             sb.append(i).append(": ").
-                append(this.getChecksum(i)).
-                append("\t start: ").append(this.getStartOffset(i)).
-                append("\t end: ").append(this.getEndOffset(i)).
-                append("\n");
+                    append(this.getChecksum(i)).
+                    append("\t start: ").append(this.getStartOffset(i)).
+                    append("\t end: ").append(this.getEndOffset(i)).
+                    append("\n");
         sb.append("\n").
                 append(this.getSourceFile()).
                 append(" (").append(this.getSourceFileLength()).append(" bytes) \n").

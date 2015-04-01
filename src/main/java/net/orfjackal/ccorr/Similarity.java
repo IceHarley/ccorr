@@ -4,9 +4,9 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.Serializable;
 
-public class Similarity implements Serializable{
+public class Similarity implements Serializable {
     private double[][] similarity;
 
     public Similarity(int size) {

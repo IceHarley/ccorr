@@ -20,7 +20,7 @@ public class CRCAlgorithm {
         return name;
     }
 
-    public void reset(){
+    public void reset() {
         crc.reset();
     }
 

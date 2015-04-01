@@ -9,9 +9,15 @@ import net.orfjackal.ccorr.*;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.text.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * The user interface for a <code>Comparison</code>. It consists primarily of a <code>JTable</code>, which shows the

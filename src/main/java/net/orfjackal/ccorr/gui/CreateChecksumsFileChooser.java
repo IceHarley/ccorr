@@ -4,7 +4,9 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.*;
+import net.orfjackal.ccorr.CRCAlgorithmFactory;
+import net.orfjackal.ccorr.FileDivider;
+import net.orfjackal.ccorr.Settings;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;

@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.*;
+import net.orfjackal.ccorr.ComparisonItem;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

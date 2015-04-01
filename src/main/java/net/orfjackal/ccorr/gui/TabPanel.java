@@ -28,7 +28,7 @@ public abstract class TabPanel extends JPanel {
             parent.remove(this);
             return true;
         } else {
-            logger.log(Level.INFO, "TabPanel.close(): Aborted, parent of {0} is {1}", new Object[] {this, this.getParent()});
+            logger.log(Level.INFO, "TabPanel.close(): Aborted, parent of {0} is {1}", new Object[]{this, this.getParent()});
             return false;
         }
     }

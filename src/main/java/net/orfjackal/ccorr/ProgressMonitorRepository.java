@@ -27,7 +27,7 @@ public class ProgressMonitorRepository {
      * must be set.
      *
      * @return the <code>ProgressMonitor</code> that was set, or null if one has not been set since
-     *         <code>get</code> was called the last time
+     * <code>get</code> was called the last time
      */
     public static ProgressMonitor get() {
         ProgressMonitor result = progressMonitor;

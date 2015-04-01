@@ -4,7 +4,7 @@
 
 package net.orfjackal.ccorr;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.List;
 
 public class Checksums implements Serializable {

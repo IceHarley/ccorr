@@ -46,8 +46,7 @@ public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
     protected String calculateChecksum(Buffer buffer) {
         try {
             lastMonitorValue = updateProgressMonitor(monitor, lastMonitorValue, currentPart * 100 / getPartsCount());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         currentPart++;

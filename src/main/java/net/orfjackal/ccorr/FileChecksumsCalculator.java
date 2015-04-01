@@ -26,8 +26,7 @@ public class FileChecksumsCalculator {
             File sourceFile = fileDivider.getSourceFile();
             long length = sourceFile.length();
             return new ChecksumFile(checksums, crc.getAlgorithm(), partLength, sourceFile, length);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return ChecksumFileFactory.EMPTY_DATA;
         }
@@ -46,8 +45,7 @@ public class FileChecksumsCalculator {
                 checksums.add(calculateChecksum(buffer));
                 buffer = fileDivider.nextPart();
             }
-        }
-        finally {
+        } finally {
             fileDivider.close();
         }
         return new Checksums(checksums);
