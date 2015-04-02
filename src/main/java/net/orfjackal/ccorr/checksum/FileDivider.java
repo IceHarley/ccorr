@@ -35,34 +35,30 @@ public class FileDivider {
     }
 
     public void divide() throws FileNotFoundException {
-        if (!this.sourceFile.exists() || !this.sourceFile.canRead()) {
+        if (!this.sourceFile.exists() || !this.sourceFile.canRead())
             throw new FileNotFoundException();
-        }
         parts = calculateNumberOfParts();
-        input =
-                new BufferedInputStream(
+        input = new BufferedInputStream(
                         new FileInputStream(this.sourceFile),
                         Settings.getReadBufferLength()
                 );
         currentPart = 0;
     }
 
+    private int calculateNumberOfParts() {
+        int parts = (int) (this.sourceFileLength / this.partLength);
+        if ((this.sourceFileLength % this.partLength) != 0)
+            parts++;
+        return parts;
+    }
+
     public Buffer nextPart() throws IOException {
-        if (currentPart == parts) {
+        if (currentPart == parts)
             return Buffer.EOF;
-        }
         currentPart++;
         byte[] buffer = new byte[(int) this.partLength];
         int len = input.read(buffer);
         return new Buffer(buffer, len);
-    }
-
-    private int calculateNumberOfParts() {
-        int parts = (int) (this.sourceFileLength / this.partLength);
-        if ((this.sourceFileLength % this.partLength) != 0) {
-            parts++;
-        }
-        return parts;
     }
 
     public int getParts() {
@@ -80,5 +76,4 @@ public class FileDivider {
     public void close() throws IOException {
         input.close();
     }
-
 }

@@ -6,8 +6,7 @@ package net.orfjackal.ccorr.checksum;
 
 import net.orfjackal.ccorr.serialization.ObjectSaver;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 
 public class ChecksumFileLoader implements Serializable {
     ChecksumFile checksumFile;

@@ -7,7 +7,7 @@ package net.orfjackal.ccorr.comparison;
 import java.io.Serializable;
 
 public class NumberOfDifferences implements Serializable {
-    int[][] numberOfDifferences;
+    private int[][] numberOfDifferences;
 
     public NumberOfDifferences(int size) {
         this.numberOfDifferences = new int[size][size];

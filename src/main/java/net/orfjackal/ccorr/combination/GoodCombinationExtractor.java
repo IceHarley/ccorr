@@ -4,18 +4,16 @@
 
 package net.orfjackal.ccorr.combination;
 
-import net.orfjackal.ccorr.comparison.Mark;
 import net.orfjackal.ccorr.checksum.ChecksumFile;
-import net.orfjackal.ccorr.comparison.Comparison;
+import net.orfjackal.ccorr.comparison.*;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.logging.Logger;
 
 public class GoodCombinationExtractor {
     private final static Logger logger = Logger.getLogger(GoodCombinationExtractor.class.getName());
 
-    private Comparison comparison;
+    private final Comparison comparison;
     private int differences;
     private GoodCombination gc;
     private long nextStart;
@@ -35,18 +33,14 @@ public class GoodCombinationExtractor {
         nextStart = 0;
         differences = comparison.getDifferences();
         for (int difference = 0; difference < differences; difference++)
-            if (!findGoodPart(difference)) {
-                try {
-                    gc.closeStreams();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (!addGoodPart(difference)) {
+                closeStreams();
                 return GoodCombination.NOT_EXISTS;
             }
         return gc;
     }
 
-    private boolean findGoodPart(int difference) {
+    private boolean addGoodPart(int difference) {
         int filesCount = comparison.getFilesCount();
         for (int fileIndex = 0; fileIndex < filesCount; fileIndex++)
             if (addFilePartIfGood(difference, fileIndex))
@@ -75,8 +69,12 @@ public class GoodCombinationExtractor {
         gc.add(new GoodCombinationPart(fileIndex, start, end));
     }
 
-    private InputStream getFileStream(int fileIndex) {
-        return StreamFactory.openInputStream(comparison.getFile(fileIndex).getSourceFile());
+    private boolean isLastIndex(int differences, int difference) {
+        return difference == (differences - 1);
+    }
+
+    private long findEndPosition(int difference, boolean isLastDifference, ChecksumFile checksumFile) {
+        return isLastDifference ? checksumFile.getSourceFileLength() : checksumFile.getEndOffset(difference);
     }
 
     private long findStartPosition(long nextStart, boolean isLastDifference, long end) {
@@ -85,14 +83,16 @@ public class GoodCombinationExtractor {
         return nextStart;
     }
 
-    private long findEndPosition(int difference, boolean isLastDifference, ChecksumFile checksumFile) {
-        long end;
-        if (isLastDifference) end = checksumFile.getSourceFileLength();
-        else end = checksumFile.getEndOffset(difference);
-        return end;
+    private void closeStreams() {
+        try {
+            gc.closeStreams();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private boolean isLastIndex(int differences, int difference) {
-        return difference == (differences - 1);
+    private InputStream getFileStream(int fileIndex) {
+        return StreamFactory.openInputStream(comparison.getFile(fileIndex).getSourceFile());
     }
 }

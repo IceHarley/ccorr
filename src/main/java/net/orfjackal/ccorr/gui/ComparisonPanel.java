@@ -4,30 +4,17 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.checksum.ChecksumFile;
-import net.orfjackal.ccorr.checksum.ChecksumFileFactory;
-import net.orfjackal.ccorr.checksum.ChecksumFileLoader;
-import net.orfjackal.ccorr.combination.GoodCombination;
-import net.orfjackal.ccorr.combination.GoodCombinationWriter;
-import net.orfjackal.ccorr.combination.MonitoredGoodCombinationWriter;
-import net.orfjackal.ccorr.combination.StreamFactory;
-import net.orfjackal.ccorr.comparison.Comparison;
-import net.orfjackal.ccorr.comparison.ComparisonItem;
+import net.orfjackal.ccorr.checksum.*;
+import net.orfjackal.ccorr.combination.*;
+import net.orfjackal.ccorr.comparison.*;
 import net.orfjackal.ccorr.settings.Settings;
-import net.orfjackal.ccorr.comparison.Mark;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import java.awt.event.*;
+import java.io.*;
+import java.text.*;
 
 /**
  * The user interface for a <code>Comparison</code>. It consists primarily of a <code>JTable</code>, which shows the

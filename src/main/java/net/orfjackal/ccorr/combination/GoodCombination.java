@@ -4,19 +4,17 @@
 
 package net.orfjackal.ccorr.combination;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class GoodCombination implements Iterable<GoodCombinationPart> {
     private final static Logger logger = Logger.getLogger(GoodCombination.class.getName());
 
     public static final GoodCombination NOT_EXISTS = new GoodCombination();
 
-    List<GoodCombinationPart> parts;
-    private Map<Integer, InputStream> streams;
+    private final List<GoodCombinationPart> parts;
+    private final Map<Integer, InputStream> streams;
 
     public GoodCombination() {
         parts = new ArrayList<GoodCombinationPart>();
@@ -64,9 +62,8 @@ public class GoodCombination implements Iterable<GoodCombinationPart> {
 
     public void closeStreams() throws IOException {
         for (InputStream stream : streams.values())
-            if (stream != null) {
+            if (stream != null)
                 stream.close();
-            }
         streams.clear();
     }
 

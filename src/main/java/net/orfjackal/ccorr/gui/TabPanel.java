@@ -5,8 +5,7 @@
 package net.orfjackal.ccorr.gui;
 
 import javax.swing.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * The common properties of a <code>JTabbedPane</code> item.

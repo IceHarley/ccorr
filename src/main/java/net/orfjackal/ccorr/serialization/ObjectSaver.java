@@ -5,10 +5,8 @@
 package net.orfjackal.ccorr.serialization;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.logging.*;
+import java.util.zip.*;
 
 public class ObjectSaver {
     private final static Logger logger = Logger.getLogger(ObjectSaver.class.getName());
@@ -16,13 +14,6 @@ public class ObjectSaver {
     private ObjectSaver() {
     }
 
-    /**
-     * Saves an object to a file.
-     *
-     * @param file the file in which to save
-     * @param obj  the object to be saved
-     * @return true if successful, otherwise false
-     */
     public static boolean saveToFile(File file, Serializable obj) {
         if (file == null || obj == null) {
             logger.severe("ObjectSaver.saveToFile: Aborted, null arguments");
@@ -40,7 +31,8 @@ public class ObjectSaver {
                     );
             output.writeObject(obj);
             output.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             logger.throwing("ObjectSaver", "saveToFile", e);
             return false;
@@ -50,12 +42,6 @@ public class ObjectSaver {
         return true;
     }
 
-    /**
-     * Loads an object from a file.
-     *
-     * @param file the file from which to load
-     * @return a new object that was loaded, or null if operation failed
-     */
     public static Object loadFromFile(File file) {
         if (file == null) {
             logger.severe("ObjectSaver.loadFromFile: Aborted, null arguments");
@@ -74,7 +60,8 @@ public class ObjectSaver {
                     );
             result = input.readObject();
             input.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             logger.throwing("ObjectSaver", "loadFromFile", e);
             return null;

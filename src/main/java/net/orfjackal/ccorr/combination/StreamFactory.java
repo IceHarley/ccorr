@@ -4,8 +4,7 @@
 
 package net.orfjackal.ccorr.combination;
 
-import net.orfjackal.ccorr.settings.Settings;
-import net.orfjackal.ccorr.settings.SettingsLoader;
+import net.orfjackal.ccorr.settings.*;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -16,7 +15,8 @@ public class StreamFactory {
     public static BufferedOutputStream openOutputStream(File file) {
         try {
             return tryOpenOutputStream(file);
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             logger.throwing("StreamFactory", "openOutputStream", e);
         }
         return null;

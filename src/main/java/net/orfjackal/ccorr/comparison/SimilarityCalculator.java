@@ -7,8 +7,8 @@ package net.orfjackal.ccorr.comparison;
 import net.orfjackal.ccorr.checksum.ChecksumFiles;
 
 public class SimilarityCalculator {
-    private ChecksumFiles files;
-    private NumberOfDifferences numberOfDifferences;
+    private final ChecksumFiles files;
+    private final NumberOfDifferences numberOfDifferences;
 
     public SimilarityCalculator(ChecksumFiles files, NumberOfDifferences numberOfDifferences) {
         this.files = files;
@@ -17,13 +17,14 @@ public class SimilarityCalculator {
 
     public Similarity calculate() {
         Similarity similarity = new Similarity(files.size());
-        for (int i = 0; i < files.size(); i++) {
-            for (int j = i; j < files.size(); j++) {
-                int shortest = files.findShorterFileParts(i, j);
-                double d = 1.0 - ((1.0 * numberOfDifferences.get(i, j)) / shortest);
-                similarity.set(i, j, d);
-            }
-        }
+        for (int i = 0; i < files.size(); i++)
+            for (int j = i; j < files.size(); j++)
+                similarity.set(i, j, calculate(i, j));
         return similarity;
+    }
+
+    private double calculate(int file1, int file2) {
+        int shortest = files.findShorterFileParts(file1, file2);
+        return 1.0 - ((1.0 * numberOfDifferences.get(file1, file2)) / shortest);
     }
 }

@@ -4,25 +4,14 @@
 
 package net.orfjackal.ccorr.combination;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.logging.*;
 
-/**
- * A class for combining many files in to one. After creating a new instance of this class, the <code>addItem</code>
- * method should be used to determine which bytes should be read from which files. The files are read in the order that
- * the parts are added. The files this class represents can then be written or its checksum can be calculated without
- * writing a physical files. A <code>FileCombination</code> is usually created by a <code>Comparison</code>.
- *
- * @author Esko Luontola
- */
 public class GoodCombinationWriter {
     private final static Logger logger = Logger.getLogger(GoodCombinationWriter.class.getName());
 
     public static final int BUFFER_LENGTH = 1024 * 1024;
-    private GoodCombination parts;
+    private final GoodCombination parts;
     private OutputStream output;
     private InputStream input;
 
@@ -71,7 +60,7 @@ public class GoodCombinationWriter {
             writeItem(item);
     }
 
-    protected void writeItem(GoodCombinationPart part) throws IOException {
+    private void writeItem(GoodCombinationPart part) throws IOException {
         logger.log(Level.INFO, "writeCombination: writing part {0) from stream {1}", new Object[]{part, parts.getStream(part.getStreamIndex())});
         input = parts.getStream(part.getStreamIndex());
         copyData(part);
@@ -80,14 +69,6 @@ public class GoodCombinationWriter {
     protected void copyData(GoodCombinationPart item) throws IOException {
         long pos = gotoStartPosition(item);
         copyDataFromPosition(item, pos);
-    }
-
-    private void closeOutputStream() throws IOException {
-        if (output != null) {
-            output.flush();
-            output.close();
-            output = null;
-        }
     }
 
     private void copyDataFromPosition(GoodCombinationPart item, long pos) throws IOException {
@@ -119,6 +100,14 @@ public class GoodCombinationWriter {
             throw new IOException("unable to start reading from the right position");
         }
         return pos;
+    }
+
+    private void closeOutputStream() throws IOException {
+        if (output != null) {
+            output.flush();
+            output.close();
+            output = null;
+        }
     }
 
     protected void cancel() throws IOException {

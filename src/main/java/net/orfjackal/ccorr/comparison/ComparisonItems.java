@@ -5,18 +5,13 @@
 package net.orfjackal.ccorr.comparison;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ComparisonItems implements Serializable {
-    List<ComparisonItem> items = new ArrayList<ComparisonItem>();
+    private final List<ComparisonItem> items = new ArrayList<ComparisonItem>();
 
     public void add(ComparisonItem item) {
         items.add(item);
-    }
-
-    public ComparisonItem find(ComparisonItem sourceItem) {
-        return find(sourceItem.getPart(), sourceItem.getChecksum());
     }
 
     public ComparisonItem find(int part, String checksum) {

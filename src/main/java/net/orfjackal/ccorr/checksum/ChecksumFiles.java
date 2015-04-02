@@ -5,9 +5,7 @@
 package net.orfjackal.ccorr.checksum;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
     private List<ChecksumFile> files;
@@ -18,18 +16,9 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
 
     public int findShorterFileParts(int index1, int index2) {
         int shortest = files.get(index1).getParts();
-        if (files.get(index2).getParts() < shortest) {
+        if (files.get(index2).getParts() < shortest)
             shortest = files.get(index2).getParts();
-        }
         return shortest;
-    }
-
-    public int size() {
-        return files.size();
-    }
-
-    public ChecksumFile get(int index) {
-        return files.get(index);
     }
 
     public boolean add(ChecksumFile file) {
@@ -40,29 +29,13 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return false;
     }
 
-    @Override
-    public Iterator<ChecksumFile> iterator() {
-        return files.iterator();
+    boolean isValidFileToAdd(ChecksumFile file) {
+        return (file != null && hasSamePartLength(file))
+                && hasSameAlgorithm(file);
     }
 
-    public boolean remove(int index) {
-        return isValidFileIndex(index) && files.remove(index) != null;
-    }
-
-    public boolean arePartsEquals(int part, int file1, int file2) {
-        String checksum1 = files.get(file1).getChecksum(part);
-        String checksum2 = files.get(file2).getChecksum(part);
-        return checksum1.equals(checksum2);
-    }
-
-    public boolean isValidFileIndex(int file) {
-        return file >= 0 && file < size();
-    }
-
-    public ChecksumFile getFile(int file) {
-        if (!isValidFileIndex(file))
-            throw new IllegalArgumentException();
-        return get(file);
+    boolean hasSamePartLength(ChecksumFile file) {
+        return getPartLength() <= 0 || file.getPartLength() == getPartLength();
     }
 
     public long getPartLength() {
@@ -71,23 +44,36 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
         return get(0).getPartLength();
     }
 
+    boolean hasSameAlgorithm(ChecksumFile file) {
+        return (getAlgorithm() == null || file.getAlgorithm().equals(getAlgorithm()));
+    }
+
     public String getAlgorithm() {
         if (size() == 0)
             return null;
         return get(0).getAlgorithm();
     }
 
-    boolean hasSameAlgorithm(ChecksumFile file) {
-        return (getAlgorithm() == null || file.getAlgorithm().equals(getAlgorithm()));
+    public boolean remove(int index) {
+        return isValidFileIndex(index) && files.remove(index) != null;
     }
 
-    boolean hasSamePartLength(ChecksumFile file) {
-        return getPartLength() <= 0 || file.getPartLength() == getPartLength();
+    public boolean isValidFileIndex(int file) {
+        return file >= 0 && file < size();
     }
 
-    boolean isValidFileToAdd(ChecksumFile file) {
-        return (file != null && hasSamePartLength(file))
-                && hasSameAlgorithm(file);
+    public ChecksumFile get(int index) {
+        return files.get(index);
+    }
+
+    public int size() {
+        return files.size();
+    }
+
+    public boolean arePartsEquals(int part, int file1, int file2) {
+        String checksum1 = files.get(file1).getChecksum(part);
+        String checksum2 = files.get(file2).getChecksum(part);
+        return checksum1.equals(checksum2);
     }
 
     private boolean isAlreadyAdded(ChecksumFile file) {
@@ -98,5 +84,10 @@ public class ChecksumFiles implements Serializable, Iterable<ChecksumFile> {
 
     public boolean isPartPresentInBothFiles(int part, int index1, int index2) {
         return files.get(index1).partPresentInFile(part) && files.get(index2).partPresentInFile(part);
+    }
+
+    @Override
+    public Iterator<ChecksumFile> iterator() {
+        return files.iterator();
     }
 }

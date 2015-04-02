@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class SettingsLoader {
     private final static Logger logger = Logger.getLogger(SettingsLoader.class.getName());
-    private static File settingsFile = new File(System.getProperty("user.home")
+    private static final File settingsFile = new File(System.getProperty("user.home")
             + System.getProperty("file.separator") + ".ccorr.cfg");
 
     public static void saveSettings() {

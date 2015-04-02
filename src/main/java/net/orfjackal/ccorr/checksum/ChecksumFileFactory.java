@@ -4,21 +4,11 @@
 
 package net.orfjackal.ccorr.checksum;
 
-import net.orfjackal.ccorr.crc.CRC;
-import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
+import net.orfjackal.ccorr.crc.*;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
-/**
- * This class is used to represent a CCorr Checksum File. A new <code>ChecksumFile</code> is created with the
- * <code>createChecksumFile</code> method. This program counts checksums from the given file at regular intervals and
- * stores the information in this class. The part checksums and other data are used in a <code>Comparison</code> to find
- * the differences between any files.
- *
- * @author Esko Luontola
- */
 public class ChecksumFileFactory {
     private final static Logger logger = Logger.getLogger(ChecksumFileFactory.class.getName());
 
@@ -35,10 +25,7 @@ public class ChecksumFileFactory {
         FileChecksumsCalculator checksumsCalculator = new MonitoredChecksumsCalculator(fileDivider, new CRC(CRCAlgorithmFactory.getByName(algorithm)));
         ChecksumFile checksumFile = checksumsCalculator.calculateChecksums();
 
-        boolean successful = !EMPTY_DATA.equals(checksumFile);
-
-        logger.info(successful ? "generateChecksums: Done" : "generateChecksums: Failed");
-
+        logger.info(!EMPTY_DATA.equals(checksumFile) ? "generateChecksums: Done" : "generateChecksums: Failed");
         return checksumFile;
     }
 }

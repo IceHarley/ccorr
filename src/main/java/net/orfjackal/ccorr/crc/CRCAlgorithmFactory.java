@@ -4,8 +4,7 @@
 
 package net.orfjackal.ccorr.crc;
 
-import jonelo.jacksum.algorithm.Crc32;
-import jonelo.jacksum.algorithm.MD;
+import jonelo.jacksum.algorithm.*;
 
 import java.util.Arrays;
 

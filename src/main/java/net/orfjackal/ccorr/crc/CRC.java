@@ -6,55 +6,15 @@ package net.orfjackal.ccorr.crc;
 
 import net.orfjackal.ccorr.checksum.Buffer;
 
-/**
- * A class that can be used to compute the checksum of a data stream with many different algorithms.
- *
- * @author Esko Luontola
- */
 public class CRC {
-
-    /**
-     * Name of the algorithm used.
-     */
-    private CRCAlgorithm algorithm;
-
-    /**
-     * The first byte of the data
-     */
+    private final CRCAlgorithm algorithm;
     private int firstByte = Byte.MIN_VALUE - 1;
-
-    /**
-     * Binary OR for all bytes of the data
-     */
     private boolean allSameAsFirstByte = true;
 
-    /**
-     * Creates a new <code>CRC</code> that uses the given algorithm. If the algorithm name is not recognized, CRC-32
-     * will be used.
-     *
-     * @param algorithm Name of the algorithm as defined in <code>getSupportedAlgorithms</code>.
-     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
-     */
     public CRC(CRCAlgorithm algorithm) {
         this.algorithm = algorithm;
     }
 
-    /**
-     * Resets the checksum to initial value.
-     */
-    public void reset() {
-        algorithm.reset();
-        firstByte = Byte.MIN_VALUE - 1;
-        allSameAsFirstByte = true;
-    }
-
-    /**
-     * Updates the checksum with specified array of bytes.
-     *
-     * @param bytes  the byte array to update the checksum with
-     * @param offset the start offset of the data
-     * @param length the number of bytes to use for the update
-     */
     public void update(byte[] bytes, int offset, int length) {
         algorithm.update(bytes, offset, length);
 
@@ -72,28 +32,15 @@ public class CRC {
         }
     }
 
-    /**
-     * Returns the checksum value in HEX format.
-     *
-     * @return the current checksum value or "0x??" if all bytes are it
-     */
     public String getHexValue() {
-        if (!allSameAsFirstByte) {
+        if (!allSameAsFirstByte)
             return algorithm.getHexValue();
-        } else {
-            String hex = Integer.toHexString(firstByte & 0xFF).toUpperCase();
-            if (hex.length() < 2) {
-                hex = "0" + hex;
-            }
-            return "0x" + hex;
-        }
+        String hex = Integer.toHexString(firstByte & 0xFF).toUpperCase();
+        if (hex.length() < 2)
+            hex = "0" + hex;
+        return "0x" + hex;
     }
 
-    /**
-     * Returns the name of the algorithm used by this <code>CRC</code> object.
-     *
-     * @return the name of the algorithm.
-     */
     public String getAlgorithm() {
         return this.algorithm.getName();
     }
@@ -102,5 +49,11 @@ public class CRC {
         reset();
         update(buffer.getBytes(), 0, buffer.getLength());
         return getHexValue();
+    }
+
+    private void reset() {
+        algorithm.reset();
+        firstByte = Byte.MIN_VALUE - 1;
+        allSameAsFirstByte = true;
     }
 }

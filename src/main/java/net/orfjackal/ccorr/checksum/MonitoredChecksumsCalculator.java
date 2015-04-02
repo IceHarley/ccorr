@@ -4,8 +4,8 @@
 
 package net.orfjackal.ccorr.checksum;
 
-import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 import net.orfjackal.ccorr.crc.CRC;
+import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 
 import javax.swing.*;
 import java.util.logging.Logger;
@@ -39,12 +39,6 @@ public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
         }
     }
 
-    private void closeProcessMonitor() {
-        if (monitor != null) {
-            monitor.setProgress(monitor.getMaximum());
-        }
-    }
-
     @Override
     protected String calculateChecksum(Buffer buffer) {
         try {
@@ -71,5 +65,11 @@ public class MonitoredChecksumsCalculator extends FileChecksumsCalculator {
             }
         }
         return lastMonitorValue;
+    }
+
+    private void closeProcessMonitor() {
+        if (monitor != null) {
+            monitor.setProgress(monitor.getMaximum());
+        }
     }
 }

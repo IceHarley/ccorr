@@ -4,8 +4,8 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
 import net.orfjackal.ccorr.checksum.FileDivider;
+import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
 import net.orfjackal.ccorr.settings.Settings;
 
 import javax.swing.*;

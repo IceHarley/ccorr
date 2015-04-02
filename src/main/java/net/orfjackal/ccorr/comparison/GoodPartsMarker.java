@@ -5,17 +5,16 @@
 package net.orfjackal.ccorr.comparison;
 
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class GoodPartsMarker {
     private final static Logger logger = Logger.getLogger(GoodPartsMarker.class.getName());
 
-    private static int good;
-    private static int unsure;
-    private static int undefined;
+    private int good;
+    private int unsure;
+    private int undefined;
 
-    Comparison comparison;
+    private final Comparison comparison;
     private Hashtable<String, Integer> checksumOccurrences;
     private int max;
     private int maxIndex;
@@ -40,10 +39,17 @@ public class GoodPartsMarker {
         undefined = 0;
     }
 
-    private void markParts(int diffFrom, int diffTo) {
-        for (int difference = diffFrom; difference <= diffTo; difference++) {
-            markPart(difference);
+    private boolean validateRange(int start, int end) {
+        if (start < 0 || end >= comparison.getDifferences() || start > end) {
+            logger.severe("Comparison.markGoodParts: Invalid range, aborting.");
+            return false;
         }
+        return true;
+    }
+
+    private void markParts(int diffFrom, int diffTo) {
+        for (int difference = diffFrom; difference <= diffTo; difference++)
+            markPart(difference);
     }
 
     private void markPart(int difference) {
@@ -59,9 +65,18 @@ public class GoodPartsMarker {
         isUnsure = false;
     }
 
+    private void findFilesOccurrences(int difference) {
+        for (int file = 0; file < comparison.getFilesCount(); file++) {
+            if (markerIsAlreadySet(difference, file)) break;
+            findFileOccurrences(difference, file);
+        }
+    }
+
     private void setMarkAccordingToOccurrences(int difference) {
-        if (maxIndex >= 0) setMark(difference);
-        else leaveUndefined();
+        if (maxIndex >= 0)
+            setMark(difference);
+        else
+            leaveUndefined();
     }
 
     private void setMark(int difference) {
@@ -73,49 +88,14 @@ public class GoodPartsMarker {
         undefined++;
     }
 
-    private void setGood(int difference) {
-        comparison.setMark(difference, maxIndex, Mark.GOOD);
-        good++;
-    }
-
     private void setUnsure(int difference) {
         comparison.setMark(difference, maxIndex, Mark.UNSURE);
         unsure++;
     }
 
-    private void findFilesOccurrences(int difference) {
-        for (int file = 0; file < comparison.getFilesCount(); file++) {
-            if (markerIsAlreadySet(difference, file)) break;
-            findFileOccurrences(difference, file);
-        }
-    }
-
-    private void findFileOccurrences(int difference, int file) {
-        if (comparison.isGoodIndex(difference, file)) {
-            String crc = comparison.getChecksum(difference, file);
-            if (isPastTheEndOfFile(crc)) return;
-
-            addCrcOccurrence(file, crc);
-        }
-    }
-
-    private void addCrcOccurrence(int file, String crc) {
-        Integer counter = addOccurrence(crc);
-        if (counter > max) {
-            crcIsRepetitionsLeader(file, counter);
-        } else if (counter == max) {
-            crcShareRepetitionLeadership();
-        }
-    }
-
-    private void crcShareRepetitionLeadership() {
-        isUnsure = true;
-    }
-
-    private void crcIsRepetitionsLeader(int file, Integer counter) {
-        max = counter;
-        maxIndex = file;
-        isUnsure = false;
+    private void setGood(int difference) {
+        comparison.setMark(difference, maxIndex, Mark.GOOD);
+        good++;
     }
 
     private boolean markerIsAlreadySet(int difference, int file) {
@@ -124,6 +104,24 @@ public class GoodPartsMarker {
             return true;
         }
         return false;
+    }
+
+    private void findFileOccurrences(int difference, int file) {
+        if (comparison.isGoodIndex(difference, file)) {
+            String crc = comparison.getChecksum(difference, file);
+            if (isPastTheEndOfFile(crc))
+                return;
+
+            addCrcOccurrence(file, crc);
+        }
+    }
+
+    private void addCrcOccurrence(int file, String crc) {
+        Integer counter = addOccurrence(crc);
+        if (counter > max)
+            crcIsRepetitionsLeader(file, counter);
+        else if (counter == max)
+            crcShareRepetitionLeadership();
     }
 
     private Integer addOccurrence(String crc) {
@@ -136,6 +134,16 @@ public class GoodPartsMarker {
         return counter;
     }
 
+    private void crcIsRepetitionsLeader(int file, Integer counter) {
+        max = counter;
+        maxIndex = file;
+        isUnsure = false;
+    }
+
+    private void crcShareRepetitionLeadership() {
+        isUnsure = true;
+    }
+
     private boolean isPastTheEndOfFile(String crc) {
         return crc.length() == 0;
     }
@@ -144,18 +152,8 @@ public class GoodPartsMarker {
         logger.log(Level.INFO, "Comparison.markGoodParts: {0}", toString());
     }
 
-    private boolean validateRange(int start, int end) {
-        if (start < 0 || end >= comparison.getDifferences() || start > end) {
-            logger.severe("Comparison.markGoodParts: Invalid range, aborting.");
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
-        return good + " good, "
-                + unsure + " unsure and "
-                + undefined + " row(s) unchanged.";
+        return String.format("%d good, %d unsure and %d row(s) unchanged.", good, unsure, undefined);
     }
 }

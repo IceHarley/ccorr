@@ -7,11 +7,10 @@ package net.orfjackal.ccorr.combination;
 import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 public class MonitoredGoodCombinationWriter extends GoodCombinationWriter {
-    ProgressMonitor monitor = ProgressMonitorRepository.get();
+    private final ProgressMonitor monitor = ProgressMonitorRepository.get();
     private int lastMonitorValue;
     private long progressValue;
     private long progressMax;
@@ -39,14 +38,8 @@ public class MonitoredGoodCombinationWriter extends GoodCombinationWriter {
     }
 
     private void closeProgressMonitor() {
-        if (monitor != null) {
+        if (monitor != null)
             monitor.setProgress(monitor.getMaximum());
-        }
-    }
-
-    @Override
-    protected void copyData(GoodCombinationPart item) throws IOException {
-        super.copyData(item);
     }
 
     @Override

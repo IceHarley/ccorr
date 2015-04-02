@@ -6,11 +6,10 @@ package net.orfjackal.ccorr.comparison;
 
 import net.orfjackal.ccorr.serialization.ObjectSaver;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 
 public class ComparisonLoader implements Serializable {
-    private Comparison comparison;
+    private final Comparison comparison;
     private File savedAsFile;
 
     public ComparisonLoader(Comparison comparison) {
@@ -23,9 +22,8 @@ public class ComparisonLoader implements Serializable {
 
     public boolean saveToFile(File file) {
         boolean successful = ObjectSaver.saveToFile(file, comparison);
-        if (successful) {
+        if (successful)
             savedAsFile = file;
-        }
         return successful;
     }
 
@@ -38,7 +36,8 @@ public class ComparisonLoader implements Serializable {
         try {
             result = (Comparison) (ObjectSaver.loadFromFile(file));
             savedAsFile = file;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             result = null;
         }

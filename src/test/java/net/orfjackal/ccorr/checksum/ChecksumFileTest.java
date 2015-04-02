@@ -63,7 +63,7 @@ public class ChecksumFileTest extends Assert {
         assertEquals(END_OFFSET_1 - shorter, cf.getEndOffset(1));
     }
 
-    @Test
+    @Test(expected=IndexOutOfBoundsException.class)
     public void trying_to_get_a_part_from_too_high_index_returns_an_error_value() throws IOException {
         int parts = 2;
         int tooHighIndex = 2;

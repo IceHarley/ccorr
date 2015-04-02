@@ -4,13 +4,11 @@
 
 package net.orfjackal.ccorr.settings;
 
-import net.orfjackal.ccorr.checksum.ChecksumFile;
-import net.orfjackal.ccorr.checksum.FileDivider;
+import net.orfjackal.ccorr.checksum.*;
 import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
 
 import java.awt.*;
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * Stores the global settings used by CCorr. The settings are loaded when this class is initiated and they are saved at
@@ -34,7 +32,6 @@ public class Settings implements Serializable {
         Settings.settings = SettingsLoader.loadSettings();
     }
 
-
     /**
      * Default checksums algorithm's name.
      */
@@ -48,12 +45,12 @@ public class Settings implements Serializable {
     /**
      * Buffer length for <code>InputStream</code>s
      */
-    private int readBufferLength = 1024 * 1024;      // 1 MB
+    private final int readBufferLength = 1024 * 1024;      // 1 MB
 
     /**
      * Buffer length for <code>OutputStream</code>s
      */
-    private int writeBufferLength = 1024 * 1024;     // 1 MB
+    private final int writeBufferLength = 1024 * 1024;     // 1 MB
 
     /**
      * Current working directory for file dialogs.
@@ -75,9 +72,8 @@ public class Settings implements Serializable {
      * @see CRCAlgorithmFactory#getSupportedAlgorithms()
      */
     public static void setDefaultAlgorithm(String algorithm) {
-        if (algorithm != null) {
+        if (algorithm != null)
             settings.defaultAlgorithm = algorithm;
-        }
     }
 
     /**
@@ -95,11 +91,10 @@ public class Settings implements Serializable {
      * allowed value will be used.
      */
     public static void setDefaultPartLength(long length) {
-        if (length < FileDivider.MIN_PART_SIZE) {
+        if (length < FileDivider.MIN_PART_SIZE)
             length = FileDivider.MIN_PART_SIZE;
-        } else if (length > FileDivider.MAX_PART_SIZE) {
+        else if (length > FileDivider.MAX_PART_SIZE)
             length = FileDivider.MAX_PART_SIZE;
-        }
         settings.defaultPartLength = length;
     }
 
@@ -130,9 +125,8 @@ public class Settings implements Serializable {
      * @param file a file in the directory that will be set as current
      */
     public static void setCurrentDirectory(File file) {
-        if (file != null) {
+        if (file != null)
             settings.currentDirectory = file.getAbsoluteFile().getParentFile();
-        }
     }
 
     /**
@@ -146,9 +140,8 @@ public class Settings implements Serializable {
      * Sets the size and location of the {@link net.orfjackal.ccorr.gui.MainWindow MainWindow} for future sessions.
      */
     public static void setWindowBounds(Rectangle bounds) {
-        if (bounds != null) {
+        if (bounds != null)
             settings.windowBounds = bounds;
-        }
     }
 
     /**

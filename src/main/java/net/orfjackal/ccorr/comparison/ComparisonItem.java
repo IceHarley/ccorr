@@ -6,15 +6,9 @@ package net.orfjackal.ccorr.comparison;
 
 import java.io.Serializable;
 
-/**
- * A class used to represent a differing part in a <code>Comparison</code>. <code>ComparisonItem</code> stores the
- * marker set to it, which is used to indicate whether the related part is corrupt or not.
- *
- * @author Esko Luontola
- */
 public class ComparisonItem implements Serializable {
     private String checksum;
-    private int part;
+    private final int part;
     private Mark mark;
 
     public ComparisonItem(String checksum, int part) {
@@ -28,9 +22,9 @@ public class ComparisonItem implements Serializable {
     }
 
     public void setMark(Mark mark) {
-        if (this.getChecksum().length() != 0) {
+        if (getChecksum().length() != 0) {
             if (mark == Mark.NEXT) {
-                this.setMark(Mark.nextMark(this.getMark()));
+                setMark(Mark.nextMark(getMark()));
             } else {
                 this.mark = mark;
             }

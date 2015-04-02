@@ -4,16 +4,14 @@
 
 package net.orfjackal.ccorr.checksum;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 
 public class ChecksumFile implements Serializable {
-
-    private Checksums checksums;
-    private String usedAlgorithm;
-    private long partLength;
-    private File sourceFile;
-    private long sourceFileLength;
+    private final Checksums checksums;
+    private final String usedAlgorithm;
+    private final long partLength;
+    private final File sourceFile;
+    private final long sourceFileLength;
 
     public ChecksumFile(Checksums checksums, String usedAlgorithm, long partLength, File sourceFile, long sourceFileLength) {
         this.checksums = checksums;
@@ -35,62 +33,58 @@ public class ChecksumFile implements Serializable {
         return checksums.get(part);
     }
 
+    public boolean hasPart(int part) {
+        return checksums.isValidIndex(part);
+    }
+
     public long getStartOffset(int part) {
-        return !checksums.isValidIndex(part) ? -1 : this.partLength * part;
+        if (!checksums.isValidIndex(part))
+            throw new IndexOutOfBoundsException();
+        return partLength * part;
     }
 
     public long getEndOffset(int part) {
-        if (!checksums.isValidIndex(part)) {
-            return -1;
-        } else {
-            long offset = (this.partLength * (part + 1)) - 1;
-            if (offset >= this.sourceFileLength) {
-                offset = this.sourceFileLength - 1;
-            }
-            return offset;
+        if (!checksums.isValidIndex(part))
+            throw new IndexOutOfBoundsException();
+        long offset = (this.partLength * (part + 1)) - 1;
+        if (offset >= this.sourceFileLength) {
+            offset = this.sourceFileLength - 1;
         }
+        return offset;
     }
 
     public ChecksumFile setSourceFile(File file) {
         ChecksumFile newChecksumFile = this;
-        if (file != null && file.exists() && file.length() == this.sourceFileLength) {
+        if (isValidFile(file))
             newChecksumFile = new ChecksumFile(checksums, usedAlgorithm, partLength, file, sourceFileLength);
-        }
         return newChecksumFile;
     }
 
+    private boolean isValidFile(File file) {
+        return file != null && file.exists() && file.length() == this.sourceFileLength;
+    }
+
     public File getSourceFile() {
-        return this.sourceFile;
+        return sourceFile;
     }
 
     public long getSourceFileLength() {
-        return this.sourceFileLength;
+        return sourceFileLength;
     }
 
     public long getPartLength() {
-        return this.partLength;
+        return partLength;
     }
 
     public String getAlgorithm() {
-        return this.usedAlgorithm;
+        return usedAlgorithm;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
         for (int i = 0; i < this.getParts(); i++)
-            sb.append(i).append(": ").
-                    append(this.getChecksum(i)).
-                    append("\t start: ").append(this.getStartOffset(i)).
-                    append("\t end: ").append(this.getEndOffset(i)).
-                    append("\n");
-        sb.append("\n").
-                append(this.getSourceFile()).
-                append(" (").append(this.getSourceFileLength()).append(" bytes) \n").
-                append(this.getParts()).
-                append(" parts (").append(this.getPartLength()).append(" bytes) ").
-                append("using ").append(this.getAlgorithm());
-
+            sb.append(String.format("%d: %s\t start: %d\t end: %d\n", i, getChecksum(i), getStartOffset(i), getEndOffset(i)));
+        sb.append(String.format("\n%s (%d bytes) %d parts (%d bytes) using %s\n", sourceFile, sourceFileLength, getParts(), partLength, usedAlgorithm));
         return sb.toString();
     }
 }

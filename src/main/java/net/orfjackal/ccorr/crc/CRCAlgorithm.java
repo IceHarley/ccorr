@@ -7,9 +7,8 @@ package net.orfjackal.ccorr.crc;
 import jonelo.jacksum.algorithm.AbstractChecksum;
 
 public class CRCAlgorithm {
-
-    private String name;
-    private AbstractChecksum crc;
+    private final String name;
+    private final AbstractChecksum crc;
 
     public CRCAlgorithm(String name, AbstractChecksum crc) {
         this.name = name;

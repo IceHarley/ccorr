@@ -26,9 +26,9 @@ public class Similarity implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < similarity.length; i++) {
-            sb.append("\nfile ").append(i).append(":");
+            sb.append(String.format("\nfile %d:", i));
             for (int j = 0; j < similarity[i].length; j++)
-                sb.append("\t").append(similarity[i][j]);
+                sb.append(String.format("\t%f", similarity[i][j]));
         }
         return sb.toString();
     }

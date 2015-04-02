@@ -4,15 +4,12 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.comparison.Comparison;
-import net.orfjackal.ccorr.comparison.ComparisonLoader;
-import net.orfjackal.ccorr.settings.Settings;
-import net.orfjackal.ccorr.settings.SettingsLoader;
+import net.orfjackal.ccorr.comparison.*;
+import net.orfjackal.ccorr.settings.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 
 /**

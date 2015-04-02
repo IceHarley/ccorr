@@ -6,13 +6,10 @@ package net.orfjackal.ccorr.checksum;
 
 import net.orfjackal.ccorr.crc.CRC;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class FileChecksumsCalculator {
-
     private FileDivider fileDivider;
     private CRC crc;
 
@@ -24,18 +21,11 @@ public class FileChecksumsCalculator {
     public ChecksumFile calculateChecksums() {
         try {
             Checksums checksums = fillChecksums();
-            long partLength = fileDivider.getPartLength();
-            File sourceFile = fileDivider.getSourceFile();
-            long length = sourceFile.length();
-            return new ChecksumFile(checksums, crc.getAlgorithm(), partLength, sourceFile, length);
+            return new ChecksumFile(checksums, crc.getAlgorithm(), fileDivider.getPartLength(), fileDivider.getSourceFile(), fileDivider.getSourceFile().length());
         } catch (IOException e) {
             e.printStackTrace();
             return ChecksumFileFactory.EMPTY_DATA;
         }
-    }
-
-    protected int getPartsCount() {
-        return fileDivider.getParts();
     }
 
     private Checksums fillChecksums() throws IOException {
@@ -55,5 +45,9 @@ public class FileChecksumsCalculator {
 
     protected String calculateChecksum(Buffer buffer) {
         return crc.calculateChecksum(buffer);
+    }
+
+    protected int getPartsCount() {
+        return fileDivider.getParts();
     }
 }
