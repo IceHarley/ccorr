@@ -38,14 +38,17 @@ public class ChecksumFile implements Serializable {
     }
 
     public long getStartOffset(int part) {
-        if (!checksums.isValidIndex(part))
-            throw new IndexOutOfBoundsException();
+        validatePart(part);
         return partLength * part;
     }
 
-    public long getEndOffset(int part) {
+    private void validatePart(int part) {
         if (!checksums.isValidIndex(part))
             throw new IndexOutOfBoundsException();
+    }
+
+    public long getEndOffset(int part) {
+        validatePart(part);
         long offset = (this.partLength * (part + 1)) - 1;
         if (offset >= this.sourceFileLength) {
             offset = this.sourceFileLength - 1;

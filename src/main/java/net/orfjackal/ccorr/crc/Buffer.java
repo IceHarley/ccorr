@@ -2,7 +2,7 @@
 // This software is released under the GNU General Public License, version 2 or later.
 // The license text is at http://www.gnu.org/licenses/gpl.html
 
-package net.orfjackal.ccorr.checksum;
+package net.orfjackal.ccorr.crc;
 
 public class Buffer {
     public final static Buffer EOF = new Buffer(new byte[0], 0);

@@ -58,15 +58,7 @@ public class MarkingDifferencesTest extends Assert {
 
     @Test
     public void when_files_with_known_checksums_are_added_then_old_marks_are_mirrored_in_new_files() throws IOException {
-        Comparison c = new Comparison();
-        c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_0));
-        c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_1));
-        c.doCompare();
-
-        c.setMark(DIFF_0, 0, Mark.BAD);
-        c.setMark(DIFF_0, 1, Mark.GOOD);
-        c.setMark(DIFF_1, 0, Mark.GOOD);
-        c.setMark(DIFF_1, 1, Mark.BAD);
+        Comparison c = prepareComparisonWithMarks();
 
         c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_0));
         c.doCompare();
@@ -80,8 +72,7 @@ public class MarkingDifferencesTest extends Assert {
         assertEquals(Mark.GOOD, c.getMark(DIFF_1, 2));
     }
 
-    @Test
-    public void when_files_with_new_checksums_are_added_then_old_marks_are_not_mirrored() throws IOException {
+    private Comparison prepareComparisonWithMarks() throws IOException {
         Comparison c = new Comparison();
         c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_0));
         c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_1));
@@ -91,6 +82,12 @@ public class MarkingDifferencesTest extends Assert {
         c.setMark(DIFF_0, 1, Mark.GOOD);
         c.setMark(DIFF_1, 0, Mark.GOOD);
         c.setMark(DIFF_1, 1, Mark.BAD);
+        return c;
+    }
+
+    @Test
+    public void when_files_with_new_checksums_are_added_then_old_marks_are_not_mirrored() throws IOException {
+        Comparison c = prepareComparisonWithMarks();
 
         c.addFile(util.createChecksumFile(PART_LENGTH * 2, START_OFFSET_0 + 1, START_OFFSET_1 + 1));
         c.doCompare();

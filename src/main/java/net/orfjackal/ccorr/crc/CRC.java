@@ -4,8 +4,6 @@
 
 package net.orfjackal.ccorr.crc;
 
-import net.orfjackal.ccorr.checksum.Buffer;
-
 public class CRC {
     private final CRCAlgorithm algorithm;
     private int firstByte = Byte.MIN_VALUE - 1;

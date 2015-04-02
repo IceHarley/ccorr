@@ -4,6 +4,7 @@
 
 package net.orfjackal.ccorr.checksum;
 
+import net.orfjackal.ccorr.crc.Buffer;
 import net.orfjackal.ccorr.crc.CRC;
 
 import java.io.*;
