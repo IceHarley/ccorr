@@ -5,6 +5,7 @@
 package net.orfjackal.ccorr.combination;
 
 import net.orfjackal.ccorr.comparison.Mark;
+import net.orfjackal.ccorr.gui.MonitoredGoodCombinationWriter;
 import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 import net.orfjackal.ccorr.utils.TestDataUtil;
 import net.orfjackal.ccorr.checksum.ChecksumFileFactory;

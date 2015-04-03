@@ -2,8 +2,10 @@
 // This software is released under the GNU General Public License, version 2 or later.
 // The license text is at http://www.gnu.org/licenses/gpl.html
 
-package net.orfjackal.ccorr.combination;
+package net.orfjackal.ccorr.gui;
 
+import net.orfjackal.ccorr.combination.GoodCombination;
+import net.orfjackal.ccorr.combination.GoodCombinationWriter;
 import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 
 import javax.swing.*;

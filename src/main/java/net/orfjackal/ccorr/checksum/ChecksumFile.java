@@ -6,7 +6,7 @@ package net.orfjackal.ccorr.checksum;
 
 import java.io.*;
 
-public class ChecksumFile implements Serializable {
+public class ChecksumFile implements PartedFile, Serializable {
     private final Checksums checksums;
     private final String usedAlgorithm;
     private final long partLength;
@@ -37,18 +37,20 @@ public class ChecksumFile implements Serializable {
         return checksums.isValidIndex(part);
     }
 
-    public long getStartOffset(int part) {
-        validatePart(part);
+    @Override
+    public long getStartOffsetOfPart(int part) {
+        validatePartOfPart(part);
         return partLength * part;
     }
 
-    private void validatePart(int part) {
+    private void validatePartOfPart(int part) {
         if (!checksums.isValidIndex(part))
             throw new IndexOutOfBoundsException();
     }
 
+    @Override
     public long getEndOffset(int part) {
-        validatePart(part);
+        validatePartOfPart(part);
         long offset = (this.partLength * (part + 1)) - 1;
         if (offset >= this.sourceFileLength) {
             offset = this.sourceFileLength - 1;
@@ -67,6 +69,7 @@ public class ChecksumFile implements Serializable {
         return file != null && file.exists() && file.length() == this.sourceFileLength;
     }
 
+    @Override
     public File getSourceFile() {
         return sourceFile;
     }
@@ -86,7 +89,7 @@ public class ChecksumFile implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.getParts(); i++)
-            sb.append(String.format("%d: %s\t start: %d\t end: %d\n", i, getChecksum(i), getStartOffset(i), getEndOffset(i)));
+            sb.append(String.format("%d: %s\t start: %d\t end: %d\n", i, getChecksum(i), getStartOffsetOfPart(i), getEndOffset(i)));
         sb.append(String.format("\n%s (%d bytes) %d parts (%d bytes) using %s\n", sourceFile, sourceFileLength, getParts(), partLength, usedAlgorithm));
         return sb.toString();
     }

@@ -39,11 +39,11 @@ public class ChecksumFileTest extends Assert {
         assertEquals(parts, cf.getParts());
 
         assertEquals("B70B4C26", cf.getChecksum(0));
-        assertEquals(START_OFFSET_0, cf.getStartOffset(0));
+        assertEquals(START_OFFSET_0, cf.getStartOffsetOfPart(0));
         assertEquals(END_OFFSET_0, cf.getEndOffset(0));
 
         assertEquals("B70B4C26", cf.getChecksum(1));
-        assertEquals(START_OFFSET_1, cf.getStartOffset(1));
+        assertEquals(START_OFFSET_1, cf.getStartOffsetOfPart(1));
         assertEquals(END_OFFSET_1, cf.getEndOffset(1));
     }
 
@@ -55,11 +55,11 @@ public class ChecksumFileTest extends Assert {
 
         assertEquals(parts, cf.getParts());
         assertEquals("B70B4C26", cf.getChecksum(0));
-        assertEquals(START_OFFSET_0, cf.getStartOffset(0));
+        assertEquals(START_OFFSET_0, cf.getStartOffsetOfPart(0));
         assertEquals(END_OFFSET_0, cf.getEndOffset(0));
 
         assertEquals("294D3872", cf.getChecksum(1));
-        assertEquals(START_OFFSET_1, cf.getStartOffset(1));
+        assertEquals(START_OFFSET_1, cf.getStartOffsetOfPart(1));
         assertEquals(END_OFFSET_1 - shorter, cf.getEndOffset(1));
     }
 
@@ -71,7 +71,7 @@ public class ChecksumFileTest extends Assert {
 
         assertTrue(cf.getParts() >= parts);
         assertEquals(null, cf.getChecksum(tooHighIndex));
-        assertEquals(-1, cf.getStartOffset(tooHighIndex));
+        assertEquals(-1, cf.getStartOffsetOfPart(tooHighIndex));
         assertEquals(-1, cf.getEndOffset(tooHighIndex));
     }
 

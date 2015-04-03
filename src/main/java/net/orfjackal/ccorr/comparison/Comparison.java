@@ -151,8 +151,8 @@ public class Comparison implements Serializable {
         long offset = -1;
         for (int i = 0; i < files.size(); i++) {
             ComparisonItem item = getItem(difference, i);
-            if (item != null && files.get(i).getStartOffset(item.getPart()) > offset)
-                offset = files.get(i).getStartOffset(item.getPart());
+            if (item != null && files.get(i).getStartOffsetOfPart(item.getPart()) > offset)
+                offset = files.get(i).getStartOffsetOfPart(item.getPart());
         }
         return offset;
     }
@@ -283,7 +283,7 @@ public class Comparison implements Serializable {
         for (int j = 0; j < files.size(); j++) {
             sb.append(String.format("\t%s (%s) ", getChecksum(index, j), getMark(index, j)));
             if (files.get(j).hasPart(part))
-                offsets = String.format("\t%d - %d\n", files.get(j).getStartOffset(part), files.get(j).getEndOffset(part));
+                offsets = String.format("\t%d - %d\n", files.get(j).getStartOffsetOfPart(part), files.get(j).getEndOffset(part));
         }
         sb.append(offsets);
         return sb.toString();
