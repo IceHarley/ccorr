@@ -6,6 +6,7 @@ package net.orfjackal.ccorr.gui;
 
 import net.orfjackal.ccorr.checksum.ChecksumFile;
 import net.orfjackal.ccorr.combination.GoodCombination;
+import net.orfjackal.ccorr.combination.GoodCombinationExtractor;
 import net.orfjackal.ccorr.comparison.*;
 
 import javax.swing.table.AbstractTableModel;
@@ -284,7 +285,7 @@ public class ComparisonTableModel extends AbstractTableModel {
      * Represents the corresponding method in the comparison.
      */
     public GoodCombination createGoodCombination() {
-        return Comparison.createGoodCombination(comparison);
+        return GoodCombinationExtractor.createGoodCombination(comparison);
     }
 
     /**

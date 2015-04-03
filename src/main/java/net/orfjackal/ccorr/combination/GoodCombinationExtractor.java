@@ -21,6 +21,15 @@ public class GoodCombinationExtractor {
         this.comparison = comparison;
     }
 
+    public static GoodCombination createGoodCombination(Comparison comparison) {
+        logger.info("createGoodCombination: Start");
+        if (comparison.getDifferences() <= 0) {
+            logger.info("createGoodCombination: Aborted, no parts available");
+            return GoodCombination.NOT_EXISTS;
+        }
+        return new GoodCombinationExtractor(comparison).extract();
+    }
+
     public GoodCombination extract() {
         GoodCombination goodCombination = extractGoodCombination();
         logger.info("createGoodCombination: Done");

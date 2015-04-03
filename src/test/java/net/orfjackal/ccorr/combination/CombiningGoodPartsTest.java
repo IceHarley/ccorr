@@ -47,7 +47,7 @@ public class CombiningGoodPartsTest extends Assert {
     }
 
     private void getGoodCombination(Comparison c) {
-        goodCombination = Comparison.createGoodCombination(c);
+        goodCombination = GoodCombinationExtractor.createGoodCombination(c);
     }
 
     private Comparison comparisonWithTwoDiffs() throws IOException {

@@ -212,19 +212,6 @@ public class Comparison implements Serializable {
         this.needsUpdating = true;
     }
 
-    public static GoodCombination createGoodCombination(Comparison comparison) {
-        logger.info("createGoodCombination: Start");
-        if (comparison.needsUpdating) {
-            logger.info("createGoodCombination: Aborted, needsUpdating == true");
-            return GoodCombination.NOT_EXISTS;
-        }
-        if (comparison.getDifferences() == 0) {
-            logger.info("createGoodCombination: Aborted, no parts available");
-            return GoodCombination.NOT_EXISTS;
-        }
-        return new GoodCombinationExtractor(comparison).extract();
-    }
-
     public boolean markRowsUndefined(int start, int end) {
         if (!validateRange(start, end)) {
             logger.info("Comparison.markRowsUndefined: Invalid range, aborting.");
