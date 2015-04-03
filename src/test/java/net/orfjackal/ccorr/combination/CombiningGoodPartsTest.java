@@ -118,7 +118,7 @@ public class CombiningGoodPartsTest extends Assert {
         Comparison c = comparisonWithTwoDiffsMarkedGood();
 
         File file = util.uniqueFile();
-        BufferedOutputStream result = StreamFactory.openOutputStream(file);
+        OutputStream result = StreamFactory.openOutputStream(file);
         getGoodCombination(c);
         new GoodCombinationWriter(goodCombination).writeCombination(result);
 

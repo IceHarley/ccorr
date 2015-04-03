@@ -4,6 +4,8 @@
 
 package net.orfjackal.ccorr.checksum;
 
+import net.orfjackal.ccorr.combination.PartedFile;
+
 import java.io.*;
 
 public class ChecksumFile implements PartedFile, Serializable {

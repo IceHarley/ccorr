@@ -4,7 +4,6 @@
 
 package net.orfjackal.ccorr.combination;
 
-import net.orfjackal.ccorr.checksum.ChecksumFile;
 import net.orfjackal.ccorr.comparison.*;
 
 import java.io.*;
@@ -57,10 +56,10 @@ public class GoodCombinationExtractor {
     }
 
     private void addGoodFilePart(int difference, int fileIndex) {
-        ChecksumFile checksumFile = comparison.getFile(fileIndex);
+        PartedFile partedFile = comparison.getPartedFile(fileIndex);
         boolean isLastDifference = isLastIndex(differences, difference);
         long start = nextStart;
-        long end = findEndPosition(difference, isLastDifference, checksumFile);
+        long end = findEndPosition(difference, isLastDifference, partedFile);
         nextStart = findStartPosition(nextStart, isLastDifference, end);
         if (!gc.containsStream(fileIndex)) {
             InputStream stream = getFileStream(fileIndex);
@@ -73,8 +72,8 @@ public class GoodCombinationExtractor {
         return difference == (differences - 1);
     }
 
-    private long findEndPosition(int difference, boolean isLastDifference, ChecksumFile checksumFile) {
-        return isLastDifference ? checksumFile.getSourceFileLength() : checksumFile.getEndOffset(difference);
+    private long findEndPosition(int difference, boolean isLastDifference, PartedFile partedFile) {
+        return isLastDifference ? partedFile.getSourceFileLength() : partedFile.getEndOffset(difference);
     }
 
     private long findStartPosition(long nextStart, boolean isLastDifference, long end) {
@@ -93,6 +92,7 @@ public class GoodCombinationExtractor {
     }
 
     private InputStream getFileStream(int fileIndex) {
-        return StreamFactory.openInputStream(comparison.getFile(fileIndex).getSourceFile());
+        PartedFile partedFile = comparison.getPartedFile(fileIndex);
+        return StreamFactory.openInputStream(partedFile.getSourceFile());
     }
 }

@@ -251,6 +251,10 @@ public class Comparison implements Serializable {
         return files.get(index);
     }
 
+    public PartedFile getPartedFile(int index) {
+        return files.get(index);
+    }
+
     public String getAlgorithm() {
         return files.getAlgorithm();
     }

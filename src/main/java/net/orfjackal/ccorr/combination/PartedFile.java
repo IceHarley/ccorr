@@ -2,7 +2,7 @@
 // This software is released under the GNU General Public License, version 2 or later.
 // The license text is at http://www.gnu.org/licenses/gpl.html
 
-package net.orfjackal.ccorr.checksum;
+package net.orfjackal.ccorr.combination;
 
 import java.io.File;
 
@@ -12,4 +12,6 @@ public interface PartedFile {
     long getEndOffset(int part);
 
     File getSourceFile();
+
+    long getSourceFileLength();
 }
