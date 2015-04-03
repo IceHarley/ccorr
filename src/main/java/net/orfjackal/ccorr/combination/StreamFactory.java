@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class StreamFactory {
     private final static Logger logger = Logger.getLogger(SettingsLoader.class.getName());
 
-    public static BufferedOutputStream openOutputStream(File file) {
+    public static OutputStream openOutputStream(File file) {
         try {
             return tryOpenOutputStream(file);
         }
@@ -22,13 +22,13 @@ public class StreamFactory {
         return null;
     }
 
-    private static BufferedOutputStream tryOpenOutputStream(File file) throws FileNotFoundException {
+    private static OutputStream tryOpenOutputStream(File file) throws FileNotFoundException {
         return new BufferedOutputStream(
                 new FileOutputStream(file, false),
                 Settings.getWriteBufferLength());
     }
 
-    public static BufferedInputStream openInputStream(File file) {
+    public static InputStream openInputStream(File file) {
         try {
             return tryOpenInputStream(file);
         } catch (FileNotFoundException e) {
@@ -37,7 +37,7 @@ public class StreamFactory {
         return null;
     }
 
-    private static BufferedInputStream tryOpenInputStream(File file) throws FileNotFoundException {
+    private static InputStream tryOpenInputStream(File file) throws FileNotFoundException {
         return new BufferedInputStream(
                 new FileInputStream(file),
                 Settings.getReadBufferLength());
