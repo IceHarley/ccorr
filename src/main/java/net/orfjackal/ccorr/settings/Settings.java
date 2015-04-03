@@ -5,7 +5,6 @@
 package net.orfjackal.ccorr.settings;
 
 import net.orfjackal.ccorr.checksum.*;
-import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
 
 import java.awt.*;
 import java.io.*;
@@ -17,14 +16,16 @@ import java.io.*;
  * @author Esko Luontola
  */
 public class Settings implements Serializable {
-
     private static final long serialVersionUID = 1L;
-
     public static final String APP_NAME = "Corruption Corrector";
+
     public static final String APP_NAME_SHORT = "CCorr";
     public static final String VERSION_NUMBER = "1.03";
     public static final String COPYRIGHT = "Copyright (C) 2003-2006  Esko Luontola, www.orfjackal.net";
     public static final String WEBSITE = "http://ccorr.sourceforge.net";
+
+    public static final int MAX_PART_SIZE = 10 * 1024 * 1024;    // 10 MB
+    public static final int MIN_PART_SIZE = 1024;           // 1 KB
 
     static Settings settings;
 
@@ -69,7 +70,6 @@ public class Settings implements Serializable {
      * Sets the default algorithm for the checksums.
      *
      * @param algorithm name of the algorithm
-     * @see CRCAlgorithmFactory#getSupportedAlgorithms()
      */
     public static void setDefaultAlgorithm(String algorithm) {
         if (algorithm != null)
@@ -91,10 +91,10 @@ public class Settings implements Serializable {
      * allowed value will be used.
      */
     public static void setDefaultPartLength(long length) {
-        if (length < FileDivider.MIN_PART_SIZE)
-            length = FileDivider.MIN_PART_SIZE;
-        else if (length > FileDivider.MAX_PART_SIZE)
-            length = FileDivider.MAX_PART_SIZE;
+        if (length < MIN_PART_SIZE)
+            length = MIN_PART_SIZE;
+        else if (length > MAX_PART_SIZE)
+            length = MAX_PART_SIZE;
         settings.defaultPartLength = length;
     }
 

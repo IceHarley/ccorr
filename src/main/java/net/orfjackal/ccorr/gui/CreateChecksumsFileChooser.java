@@ -4,7 +4,6 @@
 
 package net.orfjackal.ccorr.gui;
 
-import net.orfjackal.ccorr.checksum.FileDivider;
 import net.orfjackal.ccorr.crc.CRCAlgorithmFactory;
 import net.orfjackal.ccorr.settings.Settings;
 
@@ -71,8 +70,8 @@ public class CreateChecksumsFileChooser extends JFileChooser {
 
     private void initPartLengthInputField() {
         NumberFormatter formatter = new NumberFormatter();
-        formatter.setMinimum(FileDivider.MIN_PART_SIZE / 1024);
-        formatter.setMaximum(FileDivider.MAX_PART_SIZE / 1024);
+        formatter.setMinimum(Settings.MIN_PART_SIZE / 1024);
+        formatter.setMaximum(Settings.MAX_PART_SIZE / 1024);
 
         partLengthField = new JFormattedTextField(formatter);
         partLengthField.setValue(Settings.getDefaultPartLength() / 1024);

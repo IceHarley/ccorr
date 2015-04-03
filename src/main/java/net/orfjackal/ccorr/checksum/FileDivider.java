@@ -10,9 +10,6 @@ import net.orfjackal.ccorr.settings.Settings;
 import java.io.*;
 
 public class FileDivider {
-    public static final int MAX_PART_SIZE = 10 * 1024 * 1024;    // 10 MB
-    public static final int MIN_PART_SIZE = 1024;           // 1 KB
-
     private File sourceFile;
     private long partLength;
     private long sourceFileLength;
@@ -27,10 +24,10 @@ public class FileDivider {
     }
 
     private long constrainPartLength(long partLength) {
-        if (partLength < MIN_PART_SIZE) {
-            partLength = MIN_PART_SIZE;
-        } else if (partLength > MAX_PART_SIZE) {
-            partLength = MAX_PART_SIZE;
+        if (partLength < Settings.MIN_PART_SIZE) {
+            partLength = Settings.MIN_PART_SIZE;
+        } else if (partLength > Settings.MAX_PART_SIZE) {
+            partLength = Settings.MAX_PART_SIZE;
         }
         return partLength;
     }
