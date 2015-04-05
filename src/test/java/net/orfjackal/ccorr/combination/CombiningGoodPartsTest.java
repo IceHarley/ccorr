@@ -5,7 +5,6 @@
 package net.orfjackal.ccorr.combination;
 
 import net.orfjackal.ccorr.comparison.Mark;
-import net.orfjackal.ccorr.gui.MonitoredGoodCombinationWriter;
 import net.orfjackal.ccorr.gui.ProgressMonitorRepository;
 import net.orfjackal.ccorr.utils.TestDataUtil;
 import net.orfjackal.ccorr.checksum.ChecksumFileFactory;
@@ -120,7 +119,7 @@ public class CombiningGoodPartsTest extends Assert {
         File file = util.uniqueFile();
         OutputStream result = StreamFactory.openOutputStream(file);
         getGoodCombination(c);
-        new GoodCombinationWriter(goodCombination).writeCombination(result);
+        GoodCombinationWriterFactory.make(goodCombination).writeCombination(result);
 
         c.addFile(ChecksumFileFactory.createChecksumFile(file, PART_LENGTH, ALGORITHM));
         c.doCompare();
@@ -136,7 +135,7 @@ public class CombiningGoodPartsTest extends Assert {
         ProgressMonitorRepository.set(monitor);
 
         getGoodCombination(c);
-        new MonitoredGoodCombinationWriter(goodCombination).writeCombination(new ByteArrayOutputStream());
+        GoodCombinationWriterFactory.make(goodCombination).writeCombination(new ByteArrayOutputStream());
 
         verify(monitor).setMinimum(0);
         verify(monitor).setMaximum(100);
@@ -144,5 +143,10 @@ public class CombiningGoodPartsTest extends Assert {
         verify(monitor).setProgress(50);
         verify(monitor).setNote("Completed 50%");
         verify(monitor, atLeastOnce()).setProgress(100);
+    }
+
+    @Test
+    public void testSpringDI() throws Exception {
+        Assert.assertEquals("net.orfjackal.ccorr.gui.MonitoredGoodCombinationWriter", GoodCombinationWriterFactory.make(null).getClass().getName());
     }
 }

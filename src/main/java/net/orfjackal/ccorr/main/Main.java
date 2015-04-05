@@ -2,7 +2,9 @@
 // This software is released under the GNU General Public License, version 2 or later.
 // The license text is at http://www.gnu.org/licenses/gpl.html
 
-package net.orfjackal.ccorr.gui;
+package net.orfjackal.ccorr.main;
+
+import net.orfjackal.ccorr.gui.MainWindow;
 
 import java.util.logging.Logger;
 

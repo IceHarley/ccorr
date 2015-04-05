@@ -11,11 +11,18 @@ public class GoodCombinationWriter {
     private final static Logger logger = Logger.getLogger(GoodCombinationWriter.class.getName());
 
     public static final int BUFFER_LENGTH = 1024 * 1024;
-    private final GoodCombination parts;
+    private GoodCombination parts;
     private OutputStream output;
     private InputStream input;
 
     public GoodCombinationWriter(GoodCombination parts) {
+        this.parts = parts;
+    }
+
+    public GoodCombinationWriter() {
+    }
+
+    public void setParts(GoodCombination parts) {
         this.parts = parts;
     }
 

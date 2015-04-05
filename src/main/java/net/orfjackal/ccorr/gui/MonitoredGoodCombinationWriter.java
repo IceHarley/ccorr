@@ -17,6 +17,9 @@ public class MonitoredGoodCombinationWriter extends GoodCombinationWriter {
     private long progressValue;
     private long progressMax;
 
+    public MonitoredGoodCombinationWriter() {
+    }
+
     public MonitoredGoodCombinationWriter(GoodCombination parts) {
         super(parts);
     }

@@ -246,7 +246,7 @@ public class ComparisonPanel extends TabPanel {
             ProgressMonitorRepository.set(new ProgressMonitor(this,
                     "Writing output", "", 0, 0));
 
-            GoodCombinationWriter goodCombinationWriter = new MonitoredGoodCombinationWriter(gc);
+            GoodCombinationWriter goodCombinationWriter = GoodCombinationWriterFactory.make(gc);
             OutputStream stream = StreamFactory.openOutputStream(chooser.getSelectedFile());
             boolean successful = goodCombinationWriter.writeCombination(stream);
             Settings.setCurrentDirectory(chooser.getSelectedFile());

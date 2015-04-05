@@ -56,6 +56,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>4.0.0.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -86,7 +93,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>net.orfjackal.ccorr.gui.Main</mainClass>
+                            <mainClass>net.orfjackal.ccorr.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
